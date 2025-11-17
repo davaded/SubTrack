@@ -1,6 +1,6 @@
 'use client'
 
-import { useEffect, useState, use } from 'react'
+import { useEffect, useState } from 'react'
 import { useRouter } from 'next/navigation'
 import dayjs from 'dayjs'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
@@ -36,9 +36,8 @@ interface Subscription {
 export default function SubscriptionDetailPage({
   params,
 }: {
-  params: Promise<{ id: string }>
+  params: { id: string }
 }) {
-  const resolvedParams = use(params)
   const router = useRouter()
   const [subscription, setSubscription] = useState<Subscription | null>(null)
   const [isLoading, setIsLoading] = useState(true)
@@ -47,7 +46,7 @@ export default function SubscriptionDetailPage({
   useEffect(() => {
     async function fetchSubscription() {
       try {
-        const response = await fetch(`/api/subscriptions/${resolvedParams.id}`)
+        const response = await fetch(`/api/subscriptions/${params.id}`)
         if (response.ok) {
           const data = await response.json()
           setSubscription(data.data)
@@ -63,7 +62,7 @@ export default function SubscriptionDetailPage({
     }
 
     fetchSubscription()
-  }, [resolvedParams.id, router])
+  }, [params.id, router])
 
   const handleDelete = async () => {
     if (!confirm('Are you sure you want to delete this subscription?')) {
@@ -73,7 +72,7 @@ export default function SubscriptionDetailPage({
     setIsDeleting(true)
 
     try {
-      const response = await fetch(`/api/subscriptions/${resolvedParams.id}`, {
+      const response = await fetch(`/api/subscriptions/${params.id}`, {
         method: 'DELETE',
       })
 

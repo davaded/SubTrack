@@ -1,6 +1,6 @@
 'use client'
 
-import { useEffect, useState, use } from 'react'
+import { useEffect, useState } from 'react'
 import { useRouter } from 'next/navigation'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
@@ -32,9 +32,8 @@ interface Subscription {
 export default function EditSubscriptionPage({
   params,
 }: {
-  params: Promise<{ id: string }>
+  params: { id: string }
 }) {
-  const resolvedParams = use(params)
   const router = useRouter()
   const [isLoading, setIsLoading] = useState(true)
   const [isSaving, setIsSaving] = useState(false)
@@ -59,7 +58,7 @@ export default function EditSubscriptionPage({
   useEffect(() => {
     async function fetchSubscription() {
       try {
-        const response = await fetch(`/api/subscriptions/${resolvedParams.id}`)
+        const response = await fetch(`/api/subscriptions/${params.id}`)
         if (response.ok) {
           const data = await response.json()
           const sub = data.data
@@ -92,7 +91,7 @@ export default function EditSubscriptionPage({
     }
 
     fetchSubscription()
-  }, [resolvedParams.id, router])
+  }, [params.id, router])
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
@@ -117,7 +116,7 @@ export default function EditSubscriptionPage({
         isActive: formData.isActive,
       }
 
-      const response = await fetch(`/api/subscriptions/${resolvedParams.id}`, {
+      const response = await fetch(`/api/subscriptions/${params.id}`, {
         method: 'PUT',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(payload),
@@ -126,7 +125,7 @@ export default function EditSubscriptionPage({
       const data = await response.json()
 
       if (data.success) {
-        router.push(`/subscriptions/${resolvedParams.id}`)
+        router.push(`/subscriptions/${params.id}`)
       } else {
         setError(data.error.message || '更新订阅失败')
       }
