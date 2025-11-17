@@ -60,7 +60,18 @@ export const subscriptionSchema = z
     }
   )
 
-export const updateSubscriptionSchema = subscriptionSchema.partial().extend({
+export const updateSubscriptionSchema = z.object({
+  name: z.string().min(1).optional(),
+  amount: z.number().positive().optional(),
+  currency: currencyEnum.optional(),
+  billingCycle: billingCycleEnum.optional(),
+  customCycleDays: z.number().int().positive().optional(),
+  firstBillingDate: z.string().or(z.date()).optional(),
+  category: categoryEnum.optional(),
+  websiteUrl: z.string().url().optional().or(z.literal('')),
+  logoUrl: z.string().url().optional().or(z.literal('')),
+  notes: z.string().optional(),
+  remindDaysBefore: z.number().int().min(0).optional(),
   isActive: z.boolean().optional(),
 })
 
