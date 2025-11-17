@@ -2,6 +2,9 @@ import { NextRequest, NextResponse } from 'next/server'
 import { prisma } from '@/lib/prisma'
 import { resend, EMAIL_FROM } from '@/lib/email/resend'
 import { generateReminderEmail } from '@/lib/email/templates'
+import { sendDingTalkMessage } from '@/lib/notification/dingtalk'
+import { sendFeishuInteractiveCard } from '@/lib/notification/feishu'
+import { generateDingTalkMessage, generateFeishuMessage } from '@/lib/notification/templates'
 import dayjs from 'dayjs'
 
 // 验证 webhook 请求
@@ -39,6 +42,8 @@ export async function POST(request: NextRequest) {
     const results = {
       totalUsers: users.length,
       emailsSent: 0,
+      dingTalkSent: 0,
+      feishuSent: 0,
       errors: [] as string[],
     }
 
@@ -97,22 +102,75 @@ export async function POST(request: NextRequest) {
           upcoming: subscriptionsToRemind.filter((s) => s.daysUntilRenewal > 7),
         }
 
-        // 生成邮件内容（默认中文，可以根据用户设置改为英文）
-        const { subject, html } = generateReminderEmail({
-          userName: user.name || user.email.split('@')[0],
-          subscriptions: grouped,
-          locale: 'zh', // TODO: 可以从用户设置中获取语言偏好
-        })
+        const userName = user.name || user.email.split('@')[0]
+        const locale = 'zh' // TODO: 可以从用户设置中获取语言偏好
 
-        // 发送邮件
-        await resend.emails.send({
-          from: EMAIL_FROM,
-          to: user.email,
-          subject,
-          html,
-        })
+        // 1. 发送邮件（如果配置了 Resend）
+        if (process.env.RESEND_API_KEY) {
+          try {
+            const { subject, html } = generateReminderEmail({
+              userName,
+              subscriptions: grouped,
+              locale,
+            })
 
-        results.emailsSent++
+            await resend.emails.send({
+              from: EMAIL_FROM,
+              to: user.email,
+              subject,
+              html,
+            })
+
+            results.emailsSent++
+          } catch (error) {
+            console.error(`Failed to send email to ${user.email}:`, error)
+            results.errors.push(`Email to ${user.email}: ${error instanceof Error ? error.message : 'Unknown error'}`)
+          }
+        }
+
+        // 2. 发送钉钉通知（如果配置了 Webhook）
+        if (process.env.DINGTALK_WEBHOOK) {
+          try {
+            const dingTalkMsg = generateDingTalkMessage({
+              userName,
+              subscriptions: grouped,
+              locale,
+            })
+
+            await sendDingTalkMessage(
+              process.env.DINGTALK_WEBHOOK,
+              process.env.DINGTALK_SECRET,
+              dingTalkMsg
+            )
+
+            results.dingTalkSent++
+          } catch (error) {
+            console.error(`Failed to send DingTalk message:`, error)
+            results.errors.push(`DingTalk: ${error instanceof Error ? error.message : 'Unknown error'}`)
+          }
+        }
+
+        // 3. 发送飞书通知（如果配置了 Webhook）
+        if (process.env.FEISHU_WEBHOOK) {
+          try {
+            const feishuMsg = generateFeishuMessage({
+              userName,
+              subscriptions: grouped,
+              locale,
+            })
+
+            await sendFeishuInteractiveCard(
+              process.env.FEISHU_WEBHOOK,
+              process.env.FEISHU_SECRET,
+              feishuMsg
+            )
+
+            results.feishuSent++
+          } catch (error) {
+            console.error(`Failed to send Feishu message:`, error)
+            results.errors.push(`Feishu: ${error instanceof Error ? error.message : 'Unknown error'}`)
+          }
+        }
       } catch (error) {
         console.error(`Failed to send email to ${user.email}:`, error)
         results.errors.push(`${user.email}: ${error instanceof Error ? error.message : 'Unknown error'}`)
