@@ -171,32 +171,59 @@ export default function NewSubscriptionPage() {
               {/* 自定义 Logo URL */}
               <div className="space-y-2">
                 <Label htmlFor="logoUrl">或输入自定义图标 URL</Label>
-                <div className="flex gap-2">
-                  <Input
-                    id="logoUrl"
-                    name="logoUrl"
-                    value={formData.logoUrl}
-                    onChange={handleChange}
-                    placeholder="https://example.com/logo.png"
-                    type="url"
-                  />
-                  {formData.websiteUrl && (
+                <Input
+                  id="logoUrl"
+                  name="logoUrl"
+                  value={formData.logoUrl}
+                  onChange={handleChange}
+                  placeholder="https://example.com/logo.png"
+                  type="url"
+                />
+                {formData.websiteUrl && (
+                  <div className="flex gap-2 flex-wrap">
                     <Button
                       type="button"
                       variant="outline"
+                      size="sm"
                       onClick={() => {
-                        const logo = getLogoFromDomain(formData.websiteUrl)
+                        const logo = getLogoFromDomain(formData.websiteUrl, 'favicon')
                         if (logo) {
                           setFormData({ ...formData, logoUrl: logo })
                         }
                       }}
                     >
-                      从网站获取
+                      获取 Favicon
                     </Button>
-                  )}
-                </div>
+                    <Button
+                      type="button"
+                      variant="outline"
+                      size="sm"
+                      onClick={() => {
+                        const logo = getLogoFromDomain(formData.websiteUrl, 'google')
+                        if (logo) {
+                          setFormData({ ...formData, logoUrl: logo })
+                        }
+                      }}
+                    >
+                      Google 图标
+                    </Button>
+                    <Button
+                      type="button"
+                      variant="outline"
+                      size="sm"
+                      onClick={() => {
+                        const logo = getLogoFromDomain(formData.websiteUrl, 'clearbit')
+                        if (logo) {
+                          setFormData({ ...formData, logoUrl: logo })
+                        }
+                      }}
+                    >
+                      Clearbit Logo
+                    </Button>
+                  </div>
+                )}
                 <p className="text-xs text-sub-headline">
-                  提示：输入官网链接后，可点击"从网站获取"自动获取图标
+                  提示：输入官网链接后，可选择不同方式自动获取图标
                 </p>
               </div>
             </div>

@@ -89,12 +89,47 @@ export function getLogoForService(serviceName: string): string | null {
   return service?.logoUrl || null
 }
 
-// 从域名获取 logo
-export function getLogoFromDomain(url: string): string {
+// 从域名获取 logo - 支持多种方式
+export function getLogoFromDomain(url: string, method: 'favicon' | 'clearbit' | 'google' = 'favicon'): string {
   try {
-    const domain = new URL(url).hostname
-    return `https://logo.clearbit.com/${domain}`
+    const urlObj = new URL(url)
+    const domain = urlObj.hostname
+    const origin = urlObj.origin
+
+    switch (method) {
+      case 'favicon':
+        // 直接使用网站的 favicon.ico
+        return `${origin}/favicon.ico`
+
+      case 'clearbit':
+        // 使用 Clearbit Logo API（高质量但可能失败）
+        return `https://logo.clearbit.com/${domain}`
+
+      case 'google':
+        // 使用 Google Favicon Service（最稳定）
+        return `https://www.google.com/s2/favicons?domain=${domain}&sz=128`
+
+      default:
+        return `${origin}/favicon.ico`
+    }
   } catch {
     return ''
+  }
+}
+
+// 获取多个备选图标 URL
+export function getLogoFallbacks(url: string): string[] {
+  try {
+    const urlObj = new URL(url)
+    const domain = urlObj.hostname
+    const origin = urlObj.origin
+
+    return [
+      `${origin}/favicon.ico`,
+      `https://www.google.com/s2/favicons?domain=${domain}&sz=128`,
+      `https://logo.clearbit.com/${domain}`,
+    ]
+  } catch {
+    return []
   }
 }
