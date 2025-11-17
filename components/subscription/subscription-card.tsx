@@ -13,6 +13,7 @@ interface Subscription {
   billingCycle: string
   nextBillingDate: Date
   category?: string | null
+  logoUrl?: string | null
   isActive: boolean
   daysUntilRenewal?: number
 }
@@ -29,13 +30,36 @@ export function SubscriptionCard({ subscription }: SubscriptionCardProps) {
     <Card className={isUpcoming ? 'border-highlight' : ''}>
       <CardHeader>
         <div className="flex items-start justify-between">
-          <div>
-            <CardTitle className="text-xl">{subscription.name}</CardTitle>
-            {subscription.category && (
-              <Badge variant="secondary" className="mt-2 capitalize">
-                {subscription.category}
-              </Badge>
-            )}
+          <div className="flex items-start gap-3 flex-1">
+            {/* 图标 */}
+            {subscription.logoUrl ? (
+              <img
+                src={subscription.logoUrl}
+                alt={subscription.name}
+                className="w-12 h-12 rounded-lg object-cover border-2 border-stroke"
+                onError={(e) => {
+                  // 图片加载失败时显示首字母
+                  e.currentTarget.style.display = 'none'
+                  e.currentTarget.nextElementSibling?.classList.remove('hidden')
+                }}
+              />
+            ) : null}
+            {/* 首字母备用图标 */}
+            <div
+              className={`w-12 h-12 rounded-lg bg-highlight flex items-center justify-center text-main font-bold text-xl ${
+                subscription.logoUrl ? 'hidden' : ''
+              }`}
+            >
+              {subscription.name.charAt(0).toUpperCase()}
+            </div>
+            <div className="flex-1">
+              <CardTitle className="text-xl">{subscription.name}</CardTitle>
+              {subscription.category && (
+                <Badge variant="secondary" className="mt-2 capitalize">
+                  {subscription.category}
+                </Badge>
+              )}
+            </div>
           </div>
           <div className="text-right">
             <div className="text-2xl font-bold text-highlight">

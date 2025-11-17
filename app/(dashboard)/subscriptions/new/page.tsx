@@ -8,6 +8,7 @@ import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import { Select } from '@/components/ui/select'
 import { Textarea } from '@/components/ui/textarea'
+import { COMMON_SERVICES, getLogoFromDomain } from '@/lib/common-services'
 import dayjs from 'dayjs'
 
 export default function NewSubscriptionPage() {
@@ -103,16 +104,101 @@ export default function NewSubscriptionPage() {
             {/* Name */}
             <div className="space-y-2">
               <Label htmlFor="name">
-                Subscription Name <span className="text-red-500">*</span>
+                订阅名称 <span className="text-red-500">*</span>
               </Label>
               <Input
                 id="name"
                 name="name"
                 value={formData.name}
                 onChange={handleChange}
-                placeholder="e.g., Netflix"
+                placeholder="例如：Netflix, ChatGPT"
                 required
               />
+            </div>
+
+            {/* Logo 选择器 */}
+            <div className="space-y-3 p-4 bg-card-background rounded-lg">
+              <Label>图标/Logo（可选）</Label>
+
+              {/* 当前图标预览 */}
+              {formData.logoUrl && (
+                <div className="flex items-center gap-3">
+                  <img
+                    src={formData.logoUrl}
+                    alt="Logo preview"
+                    className="w-12 h-12 rounded-lg object-cover border-2 border-stroke"
+                    onError={(e) => {
+                      e.currentTarget.src = ''
+                      setFormData({ ...formData, logoUrl: '' })
+                    }}
+                  />
+                  <span className="text-sm text-sub-headline">当前图标</span>
+                </div>
+              )}
+
+              {/* 常见服务快速选择 */}
+              <div>
+                <p className="text-sm text-sub-headline mb-2">快速选择常见服务：</p>
+                <div className="grid grid-cols-4 sm:grid-cols-6 gap-2">
+                  {COMMON_SERVICES.slice(0, 12).map((service) => (
+                    <button
+                      key={service.name}
+                      type="button"
+                      onClick={() => {
+                        setFormData({
+                          ...formData,
+                          name: service.name,
+                          logoUrl: service.logoUrl,
+                          category: service.category,
+                        })
+                      }}
+                      className="flex flex-col items-center p-2 rounded-lg hover:bg-secondary transition-colors border-2 border-transparent hover:border-highlight"
+                      title={service.name}
+                    >
+                      <img
+                        src={service.logoUrl}
+                        alt={service.name}
+                        className="w-10 h-10 rounded-lg object-cover"
+                      />
+                      <span className="text-xs mt-1 truncate w-full text-center">
+                        {service.name.split(' ')[0]}
+                      </span>
+                    </button>
+                  ))}
+                </div>
+              </div>
+
+              {/* 自定义 Logo URL */}
+              <div className="space-y-2">
+                <Label htmlFor="logoUrl">或输入自定义图标 URL</Label>
+                <div className="flex gap-2">
+                  <Input
+                    id="logoUrl"
+                    name="logoUrl"
+                    value={formData.logoUrl}
+                    onChange={handleChange}
+                    placeholder="https://example.com/logo.png"
+                    type="url"
+                  />
+                  {formData.websiteUrl && (
+                    <Button
+                      type="button"
+                      variant="outline"
+                      onClick={() => {
+                        const logo = getLogoFromDomain(formData.websiteUrl)
+                        if (logo) {
+                          setFormData({ ...formData, logoUrl: logo })
+                        }
+                      }}
+                    >
+                      从网站获取
+                    </Button>
+                  )}
+                </div>
+                <p className="text-xs text-sub-headline">
+                  提示：输入官网链接后，可点击"从网站获取"自动获取图标
+                </p>
+              </div>
             </div>
 
             {/* Amount and Currency */}
