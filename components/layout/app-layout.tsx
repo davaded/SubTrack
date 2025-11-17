@@ -1,8 +1,7 @@
 'use client'
 
 import { useAuth } from '@/hooks/use-auth'
-import { MobileHeader } from './mobile-header'
-import { Sidebar } from './sidebar'
+import { TopNav } from './top-nav'
 import { MobileNav } from './mobile-nav'
 
 export function AppLayout({ children }: { children: React.ReactNode }) {
@@ -21,17 +20,14 @@ export function AppLayout({ children }: { children: React.ReactNode }) {
 
   return (
     <div className="min-h-screen bg-background">
-      <MobileHeader />
-      <div className="flex">
-        {/* 桌面端侧边栏 */}
-        <div className="hidden lg:block">
-          <Sidebar />
-        </div>
-        {/* 主内容区 */}
-        <main className="flex-1 p-4 md:p-6 lg:p-8 pb-20 lg:pb-8">
-          {children}
-        </main>
-      </div>
+      {/* 顶部导航栏 */}
+      <TopNav />
+
+      {/* 主内容区 - 全宽 */}
+      <main className="container mx-auto px-4 py-6 md:py-8 pb-20 md:pb-8">
+        {children}
+      </main>
+
       {/* 移动端底部导航 */}
       <MobileNav />
     </div>
