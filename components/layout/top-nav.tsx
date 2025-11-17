@@ -4,20 +4,22 @@ import Link from 'next/link'
 import { usePathname, useRouter } from 'next/navigation'
 import { cn } from '@/lib/utils'
 import { useAuthStore } from '@/store/auth-store'
-import { Home, CreditCard, BarChart3, Settings, LogOut } from 'lucide-react'
+import { Home, CreditCard, BarChart3, Settings, LogOut, Languages } from 'lucide-react'
 import { Button } from '@/components/ui/button'
-
-const navItems = [
-  { href: '/', label: '首页', icon: Home },
-  { href: '/subscriptions', label: '订阅管理', icon: CreditCard },
-  { href: '/statistics', label: '统计分析', icon: BarChart3 },
-  { href: '/settings', label: '设置', icon: Settings },
-]
+import { useTranslation } from '@/lib/hooks/use-translation'
 
 export function TopNav() {
   const pathname = usePathname()
   const router = useRouter()
   const { user, logout } = useAuthStore()
+  const { t, locale, setLocale } = useTranslation()
+
+  const navItems = [
+    { href: '/', label: t.nav.dashboard, icon: Home },
+    { href: '/subscriptions', label: t.nav.subscriptions, icon: CreditCard },
+    { href: '/statistics', label: t.nav.analytics, icon: BarChart3 },
+    { href: '/settings', label: t.nav.settings, icon: Settings },
+  ]
 
   const handleLogout = async () => {
     try {
@@ -27,6 +29,10 @@ export function TopNav() {
     } catch (error) {
       console.error('登出失败:', error)
     }
+  }
+
+  const toggleLanguage = () => {
+    setLocale(locale === 'zh' ? 'en' : 'zh')
   }
 
   return (
@@ -65,7 +71,7 @@ export function TopNav() {
           </nav>
 
           {/* 用户信息和登出 */}
-          <div className="hidden md:flex items-center space-x-4">
+          <div className="hidden md:flex items-center space-x-2">
             {user && (
               <>
                 <span className="text-sm text-sub-headline">
@@ -74,19 +80,40 @@ export function TopNav() {
                 <Button
                   variant="ghost"
                   size="sm"
+                  onClick={toggleLanguage}
+                  className="gap-1"
+                  title={locale === 'zh' ? 'Switch to English' : '切换到中文'}
+                >
+                  <Languages className="h-4 w-4" />
+                  <span className="text-xs font-medium">
+                    {locale === 'zh' ? 'EN' : '中'}
+                  </span>
+                </Button>
+                <Button
+                  variant="ghost"
+                  size="sm"
                   onClick={handleLogout}
                   className="gap-2"
                 >
                   <LogOut className="h-4 w-4" />
-                  登出
+                  {t.nav.logout}
                 </Button>
               </>
             )}
           </div>
 
           {/* 移动端菜单按钮 */}
-          <div className="md:hidden flex items-center">
-            <span className="text-sm text-sub-headline mr-3">
+          <div className="md:hidden flex items-center gap-2">
+            <Button
+              variant="ghost"
+              size="sm"
+              onClick={toggleLanguage}
+              className="p-2"
+              title={locale === 'zh' ? 'Switch to English' : '切换到中文'}
+            >
+              <Languages className="h-4 w-4" />
+            </Button>
+            <span className="text-sm text-sub-headline">
               {user?.name || user?.email}
             </span>
           </div>

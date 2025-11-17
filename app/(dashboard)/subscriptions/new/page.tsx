@@ -9,10 +9,12 @@ import { Label } from '@/components/ui/label'
 import { Select } from '@/components/ui/select'
 import { Textarea } from '@/components/ui/textarea'
 import { COMMON_SERVICES, getLogoFromDomain } from '@/lib/common-services'
+import { useTranslation } from '@/lib/hooks/use-translation'
 import dayjs from 'dayjs'
 
 export default function NewSubscriptionPage() {
   const router = useRouter()
+  const { t } = useTranslation()
   const [isLoading, setIsLoading] = useState(false)
   const [error, setError] = useState('')
 
@@ -83,9 +85,9 @@ export default function NewSubscriptionPage() {
   return (
     <div className="max-w-4xl mx-auto">
       <div className="mb-4">
-        <h1 className="text-2xl font-bold text-headline">添加订阅</h1>
+        <h1 className="text-2xl font-bold text-headline">{t.subscription.createTitle}</h1>
         <p className="text-sm text-sub-headline mt-0.5">
-          快速添加新的订阅服务
+          {t.subscription.createDesc}
         </p>
       </div>
 
@@ -100,7 +102,7 @@ export default function NewSubscriptionPage() {
 
             {/* 常见服务快速选择 */}
             <div className="p-3 bg-card-background rounded-lg">
-              <Label className="text-sm">快速选择常见服务</Label>
+              <Label className="text-sm">{t.subscription.quickSelect}</Label>
               <div className="grid grid-cols-6 sm:grid-cols-8 md:grid-cols-10 gap-2 mt-2">
                 {COMMON_SERVICES.slice(0, 10).map((service) => (
                   <button
@@ -134,21 +136,21 @@ export default function NewSubscriptionPage() {
             <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
               <div className="space-y-1.5">
                 <Label htmlFor="name" className="text-sm">
-                  订阅名称 <span className="text-red-500">*</span>
+                  {t.subscription.name} <span className="text-red-500">*</span>
                 </Label>
                 <Input
                   id="name"
                   name="name"
                   value={formData.name}
                   onChange={handleChange}
-                  placeholder="如：Netflix"
+                  placeholder={t.subscription.namePlaceholder}
                   required
                   className="h-9"
                 />
               </div>
               <div className="space-y-1.5">
                 <Label htmlFor="amount" className="text-sm">
-                  金额 <span className="text-red-500">*</span>
+                  {t.subscription.amount} <span className="text-red-500">*</span>
                 </Label>
                 <Input
                   id="amount"
@@ -157,13 +159,13 @@ export default function NewSubscriptionPage() {
                   step="0.01"
                   value={formData.amount}
                   onChange={handleChange}
-                  placeholder="30.00"
+                  placeholder={t.subscription.amountPlaceholder}
                   required
                   className="h-9"
                 />
               </div>
               <div className="space-y-1.5">
-                <Label htmlFor="currency" className="text-sm">货币</Label>
+                <Label htmlFor="currency" className="text-sm">{t.subscription.currency}</Label>
                 <Select
                   id="currency"
                   name="currency"
@@ -171,10 +173,10 @@ export default function NewSubscriptionPage() {
                   onChange={handleChange}
                   className="h-9"
                 >
-                  <option value="CNY">¥ 人民币</option>
-                  <option value="USD">$ 美元</option>
-                  <option value="EUR">€ 欧元</option>
-                  <option value="GBP">£ 英镑</option>
+                  <option value="CNY">{t.subscription.currencies.CNY}</option>
+                  <option value="USD">{t.subscription.currencies.USD}</option>
+                  <option value="EUR">{t.subscription.currencies.EUR}</option>
+                  <option value="GBP">{t.subscription.currencies.GBP}</option>
                 </Select>
               </div>
             </div>
@@ -183,7 +185,7 @@ export default function NewSubscriptionPage() {
             <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
               <div className="space-y-1.5">
                 <Label htmlFor="billingCycle" className="text-sm">
-                  计费周期 <span className="text-red-500">*</span>
+                  {t.subscription.billingCycle} <span className="text-red-500">*</span>
                 </Label>
                 <Select
                   id="billingCycle"
@@ -192,17 +194,17 @@ export default function NewSubscriptionPage() {
                   onChange={handleChange}
                   className="h-9"
                 >
-                  <option value="monthly">每月</option>
-                  <option value="quarterly">每季度</option>
-                  <option value="semi-annually">每半年</option>
-                  <option value="annually">每年</option>
-                  <option value="custom">自定义</option>
+                  <option value="monthly">{t.subscription.cycles.monthly}</option>
+                  <option value="quarterly">{t.subscription.cycles.quarterly}</option>
+                  <option value="semi-annually">{t.subscription.cycles.semiAnnually}</option>
+                  <option value="annually">{t.subscription.cycles.annually}</option>
+                  <option value="custom">{t.subscription.cycles.custom}</option>
                 </Select>
               </div>
               {formData.billingCycle === 'custom' && (
                 <div className="space-y-1.5">
                   <Label htmlFor="customCycleDays" className="text-sm">
-                    自定义天数 <span className="text-red-500">*</span>
+                    {t.subscription.customCycleDays} <span className="text-red-500">*</span>
                   </Label>
                   <Input
                     id="customCycleDays"
@@ -218,7 +220,7 @@ export default function NewSubscriptionPage() {
               )}
               <div className="space-y-1.5">
                 <Label htmlFor="firstBillingDate" className="text-sm">
-                  首次计费日期 <span className="text-red-500">*</span>
+                  {t.subscription.firstBillingDate} <span className="text-red-500">*</span>
                 </Label>
                 <Input
                   id="firstBillingDate"
@@ -231,7 +233,7 @@ export default function NewSubscriptionPage() {
                 />
               </div>
               <div className="space-y-1.5">
-                <Label htmlFor="category" className="text-sm">分类</Label>
+                <Label htmlFor="category" className="text-sm">{t.subscription.category}</Label>
                 <Select
                   id="category"
                   name="category"
@@ -239,14 +241,14 @@ export default function NewSubscriptionPage() {
                   onChange={handleChange}
                   className="h-9"
                 >
-                  <option value="">选择分类</option>
-                  <option value="entertainment">娱乐</option>
-                  <option value="productivity">工作</option>
-                  <option value="education">学习</option>
-                  <option value="fitness">健身</option>
-                  <option value="music">音乐</option>
-                  <option value="cloud">云服务</option>
-                  <option value="other">其他</option>
+                  <option value="">{t.subscription.categorySelect}</option>
+                  <option value="entertainment">{t.subscription.categories.entertainment}</option>
+                  <option value="productivity">{t.subscription.categories.productivity}</option>
+                  <option value="education">{t.subscription.categories.education}</option>
+                  <option value="fitness">{t.subscription.categories.fitness}</option>
+                  <option value="music">{t.subscription.categories.music}</option>
+                  <option value="cloud">{t.subscription.categories.cloud}</option>
+                  <option value="other">{t.subscription.categories.other}</option>
                 </Select>
               </div>
             </div>
@@ -254,19 +256,19 @@ export default function NewSubscriptionPage() {
             {/* 网站和提醒 - 第三行 */}
             <div className="grid grid-cols-1 md:grid-cols-4 gap-3">
               <div className="md:col-span-3 space-y-1.5">
-                <Label htmlFor="websiteUrl" className="text-sm">网站链接</Label>
+                <Label htmlFor="websiteUrl" className="text-sm">{t.subscription.websiteUrl}</Label>
                 <Input
                   id="websiteUrl"
                   name="websiteUrl"
                   type="url"
                   value={formData.websiteUrl}
                   onChange={handleChange}
-                  placeholder="https://example.com"
+                  placeholder={t.subscription.websiteUrlPlaceholder}
                   className="h-9"
                 />
               </div>
               <div className="space-y-1.5">
-                <Label htmlFor="remindDaysBefore" className="text-sm">提前提醒(天)</Label>
+                <Label htmlFor="remindDaysBefore" className="text-sm">{t.subscription.remindDaysBefore}</Label>
                 <Input
                   id="remindDaysBefore"
                   name="remindDaysBefore"
@@ -282,7 +284,7 @@ export default function NewSubscriptionPage() {
             {/* 图标设置 */}
             <div className="p-3 bg-card-background rounded-lg space-y-2">
               <div className="flex items-center gap-2">
-                <Label className="text-sm">图标设置</Label>
+                <Label className="text-sm">{t.subscription.iconSettings}</Label>
                 {formData.logoUrl && (
                   <img
                     src={formData.logoUrl}
@@ -300,7 +302,7 @@ export default function NewSubscriptionPage() {
                   name="logoUrl"
                   value={formData.logoUrl}
                   onChange={handleChange}
-                  placeholder="图标 URL"
+                  placeholder={t.subscription.logoUrl}
                   type="url"
                   className="h-8 text-sm flex-1 min-w-[200px]"
                 />
@@ -316,7 +318,7 @@ export default function NewSubscriptionPage() {
                       }}
                       className="h-8 text-xs"
                     >
-                      Favicon
+                      {t.subscription.fetchFavicon}
                     </Button>
                     <Button
                       type="button"
@@ -328,7 +330,7 @@ export default function NewSubscriptionPage() {
                       }}
                       className="h-8 text-xs"
                     >
-                      Google
+                      {t.subscription.fetchGoogle}
                     </Button>
                     <Button
                       type="button"
@@ -340,7 +342,7 @@ export default function NewSubscriptionPage() {
                       }}
                       className="h-8 text-xs"
                     >
-                      Clearbit
+                      {t.subscription.fetchClearbit}
                     </Button>
                   </>
                 )}
@@ -349,13 +351,13 @@ export default function NewSubscriptionPage() {
 
             {/* 备注 */}
             <div className="space-y-1.5">
-              <Label htmlFor="notes" className="text-sm">备注</Label>
+              <Label htmlFor="notes" className="text-sm">{t.subscription.notes}</Label>
               <Textarea
                 id="notes"
                 name="notes"
                 value={formData.notes}
                 onChange={handleChange}
-                placeholder="添加备注信息..."
+                placeholder={t.subscription.notesPlaceholder}
                 rows={2}
                 className="text-sm"
               />
@@ -364,7 +366,7 @@ export default function NewSubscriptionPage() {
             {/* 按钮 */}
             <div className="flex gap-3 pt-2">
               <Button type="submit" disabled={isLoading} className="flex-1 h-9">
-                {isLoading ? '创建中...' : '创建订阅'}
+                {isLoading ? t.subscription.creating : t.subscription.create}
               </Button>
               <Button
                 type="button"
@@ -373,7 +375,7 @@ export default function NewSubscriptionPage() {
                 disabled={isLoading}
                 className="h-9"
               >
-                取消
+                {t.common.cancel}
               </Button>
             </div>
           </form>
