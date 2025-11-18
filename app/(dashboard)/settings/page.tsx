@@ -9,8 +9,10 @@ import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import { Select } from '@/components/ui/select'
 import { Bell, Mail, Loader2, CheckCircle2, XCircle } from 'lucide-react'
+import { useTranslation } from '@/hooks/use-translation'
 
 export default function SettingsPage() {
+  const t = useTranslation()
   const router = useRouter()
   const { user, setUser } = useAuthStore()
   const [isLoading, setIsLoading] = useState(false)
@@ -63,7 +65,7 @@ export default function SettingsPage() {
           setNotificationConfig(config)
         }
       } catch (error) {
-        console.error('获取通知配置失败:', error)
+        console.error('Failed to fetch notification config:', error)
       }
     }
     fetchNotificationConfig()
@@ -100,11 +102,12 @@ export default function SettingsPage() {
         setError(data.error)
       }
     } catch (err: any) {
+      const errorMessage = t.errors.networkError
       setTestResults({
         ...testResults,
-        [channel]: { success: false, message: '网络错误，请重试' },
+        [channel]: { success: false, message: errorMessage },
       })
-      setError('网络错误，请重试')
+      setError(errorMessage)
     } finally {
       setTestingChannel(null)
       // 3秒后清除测试结果
@@ -123,7 +126,7 @@ export default function SettingsPage() {
     try {
       // 这里应该调用更新用户信息的 API
       // 暂时模拟成功
-      setMessage('个人信息更新成功')
+      setMessage(t.settings.profileUpdateSuccess)
       if (user) {
         setUser({
           ...user,
@@ -132,7 +135,7 @@ export default function SettingsPage() {
         })
       }
     } catch (err) {
-      setError('更新失败，请重试')
+      setError(t.errors.updateFailed)
     } finally {
       setIsLoading(false)
     }
@@ -144,12 +147,12 @@ export default function SettingsPage() {
     setMessage('')
 
     if (passwordData.newPassword !== passwordData.confirmPassword) {
-      setError('新密码和确认密码不一致')
+      setError(t.errors.passwordMismatch)
       return
     }
 
     if (passwordData.newPassword.length < 6) {
-      setError('新密码至少需要 6 位字符')
+      setError(t.errors.passwordTooShort)
       return
     }
 
@@ -158,14 +161,14 @@ export default function SettingsPage() {
     try {
       // 这里应该调用修改密码的 API
       // 暂时模拟成功
-      setMessage('密码修改成功')
+      setMessage(t.settings.passwordChangeSuccess)
       setPasswordData({
         currentPassword: '',
         newPassword: '',
         confirmPassword: '',
       })
     } catch (err) {
-      setError('密码修改失败，请检查当前密码是否正确')
+      setError(t.settings.passwordChangeFailed)
     } finally {
       setIsLoading(false)
     }
@@ -174,8 +177,8 @@ export default function SettingsPage() {
   return (
     <div className="max-w-3xl mx-auto space-y-6">
       <div>
-        <h1 className="text-3xl font-bold text-headline">设置</h1>
-        <p className="text-sub-headline mt-1">管理您的账户设置和偏好</p>
+        <h1 className="text-3xl font-bold text-headline">{t.settings.title}</h1>
+        <p className="text-sub-headline mt-1">{t.settings.description}</p>
       </div>
 
       {/* 消息提示 */}
@@ -194,13 +197,13 @@ export default function SettingsPage() {
       {/* 个人信息 */}
       <Card>
         <CardHeader>
-          <CardTitle>个人信息</CardTitle>
-          <CardDescription>更新您的个人资料</CardDescription>
+          <CardTitle>{t.settings.profile}</CardTitle>
+          <CardDescription>{t.settings.profileDescription}</CardDescription>
         </CardHeader>
         <CardContent>
           <form onSubmit={handleProfileUpdate} className="space-y-4">
             <div className="space-y-2">
-              <Label htmlFor="email">邮箱</Label>
+              <Label htmlFor="email">{t.settings.emailLabel}</Label>
               <Input
                 id="email"
                 type="email"
@@ -208,11 +211,11 @@ export default function SettingsPage() {
                 disabled
                 className="bg-card-background"
               />
-              <p className="text-xs text-sub-headline">邮箱无法修改</p>
+              <p className="text-xs text-sub-headline">{t.settings.emailCannotChange}</p>
             </div>
 
             <div className="space-y-2">
-              <Label htmlFor="name">姓名</Label>
+              <Label htmlFor="name">{t.settings.nameLabel}</Label>
               <Input
                 id="name"
                 type="text"
@@ -220,12 +223,12 @@ export default function SettingsPage() {
                 onChange={(e) =>
                   setProfileData({ ...profileData, name: e.target.value })
                 }
-                placeholder="您的姓名"
+                placeholder={t.settings.namePlaceholder}
               />
             </div>
 
             <div className="space-y-2">
-              <Label htmlFor="currency">默认货币</Label>
+              <Label htmlFor="currency">{t.settings.defaultCurrency}</Label>
               <Select
                 id="currency"
                 value={profileData.defaultCurrency}
@@ -236,18 +239,18 @@ export default function SettingsPage() {
                   })
                 }
               >
-                <option value="CNY">人民币 (¥)</option>
-                <option value="USD">美元 ($)</option>
-                <option value="EUR">欧元 (€)</option>
-                <option value="GBP">英镑 (£)</option>
+                <option value="CNY">{t.subscription.currencies.CNY}</option>
+                <option value="USD">{t.subscription.currencies.USD}</option>
+                <option value="EUR">{t.subscription.currencies.EUR}</option>
+                <option value="GBP">{t.subscription.currencies.GBP}</option>
               </Select>
               <p className="text-xs text-sub-headline">
-                新添加的订阅将默认使用此货币
+                {t.settings.defaultCurrencyHint}
               </p>
             </div>
 
             <Button type="submit" disabled={isLoading}>
-              {isLoading ? '保存中...' : '保存更改'}
+              {isLoading ? t.subscription.saving : t.subscription.saveChanges}
             </Button>
           </form>
         </CardContent>
@@ -256,13 +259,13 @@ export default function SettingsPage() {
       {/* 修改密码 */}
       <Card>
         <CardHeader>
-          <CardTitle>修改密码</CardTitle>
-          <CardDescription>为了安全，请定期更新您的密码</CardDescription>
+          <CardTitle>{t.settings.changePassword}</CardTitle>
+          <CardDescription>{t.settings.changePasswordDescription}</CardDescription>
         </CardHeader>
         <CardContent>
           <form onSubmit={handlePasswordChange} className="space-y-4">
             <div className="space-y-2">
-              <Label htmlFor="currentPassword">当前密码</Label>
+              <Label htmlFor="currentPassword">{t.settings.currentPassword}</Label>
               <Input
                 id="currentPassword"
                 type="password"
@@ -279,7 +282,7 @@ export default function SettingsPage() {
             </div>
 
             <div className="space-y-2">
-              <Label htmlFor="newPassword">新密码</Label>
+              <Label htmlFor="newPassword">{t.settings.newPassword}</Label>
               <Input
                 id="newPassword"
                 type="password"
@@ -293,11 +296,11 @@ export default function SettingsPage() {
                 placeholder="••••••"
                 required
               />
-              <p className="text-xs text-sub-headline">至少 6 位字符</p>
+              <p className="text-xs text-sub-headline">{t.settings.passwordMinLength}</p>
             </div>
 
             <div className="space-y-2">
-              <Label htmlFor="confirmPassword">确认新密码</Label>
+              <Label htmlFor="confirmPassword">{t.settings.confirmNewPassword}</Label>
               <Input
                 id="confirmPassword"
                 type="password"
@@ -314,7 +317,7 @@ export default function SettingsPage() {
             </div>
 
             <Button type="submit" disabled={isLoading}>
-              {isLoading ? '修改中...' : '修改密码'}
+              {isLoading ? t.settings.passwordChanging : t.settings.changePassword}
             </Button>
           </form>
         </CardContent>
@@ -325,17 +328,17 @@ export default function SettingsPage() {
         <CardHeader>
           <CardTitle className="flex items-center gap-2">
             <Bell className="h-5 w-5" />
-            通知渠道测试
+            {t.settings.notificationTest}
           </CardTitle>
           <CardDescription>
-            测试您配置的通知渠道是否正常工作
+            {t.settings.notificationTestDesc}
           </CardDescription>
         </CardHeader>
         <CardContent>
           {notificationConfig === null ? (
             <div className="flex items-center justify-center py-8 text-sub-headline">
               <Loader2 className="h-5 w-5 animate-spin mr-2" />
-              加载配置中...
+              {t.settings.loadingConfig}
             </div>
           ) : !notificationConfig.hasAnyConfig ? (
             <div className="bg-yellow-50 border-2 border-yellow-200 rounded-lg p-4">
@@ -343,18 +346,18 @@ export default function SettingsPage() {
                 <XCircle className="h-5 w-5 text-yellow-600 mt-0.5" />
                 <div>
                   <div className="font-medium text-yellow-900">
-                    未配置任何通知渠道
+                    {t.settings.noChannelConfigured}
                   </div>
                   <div className="text-sm text-yellow-700 mt-1">
-                    请在项目的 <code className="bg-yellow-100 px-1 rounded">.env</code> 文件中配置至少一个通知渠道：
+                    {t.settings.configureChannelHint}
                   </div>
                   <ul className="text-sm text-yellow-700 mt-2 space-y-1 ml-4 list-disc">
-                    <li>邮件通知：RESEND_API_KEY + EMAIL_FROM</li>
-                    <li>钉钉通知：DINGTALK_WEBHOOK + DINGTALK_SECRET</li>
-                    <li>飞书通知：FEISHU_WEBHOOK + FEISHU_SECRET</li>
+                    <li>RESEND_API_KEY + EMAIL_FROM</li>
+                    <li>DINGTALK_WEBHOOK + DINGTALK_SECRET</li>
+                    <li>FEISHU_WEBHOOK + FEISHU_SECRET</li>
                   </ul>
                   <div className="text-sm text-yellow-700 mt-2">
-                    配置后重启应用即可使用。详见：<code className="bg-yellow-100 px-1 rounded">NOTIFICATION_SETUP.md</code>
+                    NOTIFICATION_SETUP.md
                   </div>
                 </div>
               </div>
@@ -369,13 +372,13 @@ export default function SettingsPage() {
                       <Mail className="h-5 w-5 text-blue-600 mt-0.5" />
                       <div className="flex-1">
                         <div className="font-medium text-headline">
-                          📧 邮件通知 (Resend)
+                          📧 {t.settings.emailChannel}
                         </div>
                         <div className="text-sm text-sub-headline mt-1">
-                          发件人：{notificationConfig.email.from || '未设置'}
+                          {t.settings.sender}{notificationConfig.email.from || '未设置'}
                         </div>
                         <div className="text-sm text-sub-headline">
-                          接收邮箱：{user?.email}
+                          {t.settings.receiver}{user?.email}
                         </div>
                         {testResults.email && (
                           <div
@@ -404,10 +407,10 @@ export default function SettingsPage() {
                       {testingChannel === 'email' ? (
                         <>
                           <Loader2 className="h-4 w-4 mr-1 animate-spin" />
-                          发送中...
+                          {t.settings.sending}
                         </>
                       ) : (
-                        '发送测试'
+                        t.settings.sendTest
                       )}
                     </Button>
                   </div>
@@ -422,17 +425,17 @@ export default function SettingsPage() {
                       <Bell className="h-5 w-5 text-blue-500 mt-0.5" />
                       <div className="flex-1">
                         <div className="font-medium text-headline">
-                          📱 钉钉通知
+                          📱 {t.settings.dingtalkChannel}
                         </div>
                         <div className="text-sm text-sub-headline mt-1">
-                          Webhook：已配置
+                          {t.settings.webhookConfigured}
                         </div>
                         <div className="text-sm text-sub-headline">
-                          加签验证：
+                          {t.settings.signatureVerification}
                           {notificationConfig.dingtalk.secured ? (
-                            <span className="text-green-600">✓ 已启用</span>
+                            <span className="text-green-600">✓ {t.settings.signatureEnabled}</span>
                           ) : (
-                            <span className="text-yellow-600">未启用</span>
+                            <span className="text-yellow-600">{t.settings.signatureDisabled}</span>
                           )}
                         </div>
                         {testResults.dingtalk && (
@@ -462,10 +465,10 @@ export default function SettingsPage() {
                       {testingChannel === 'dingtalk' ? (
                         <>
                           <Loader2 className="h-4 w-4 mr-1 animate-spin" />
-                          发送中...
+                          {t.settings.sending}
                         </>
                       ) : (
-                        '发送测试'
+                        t.settings.sendTest
                       )}
                     </Button>
                   </div>
@@ -480,17 +483,17 @@ export default function SettingsPage() {
                       <Bell className="h-5 w-5 text-green-500 mt-0.5" />
                       <div className="flex-1">
                         <div className="font-medium text-headline">
-                          📱 飞书通知
+                          📱 {t.settings.feishuChannel}
                         </div>
                         <div className="text-sm text-sub-headline mt-1">
-                          Webhook：已配置
+                          {t.settings.webhookConfigured}
                         </div>
                         <div className="text-sm text-sub-headline">
-                          签名验证：
+                          {t.settings.signatureVerification}
                           {notificationConfig.feishu.secured ? (
-                            <span className="text-green-600">✓ 已启用</span>
+                            <span className="text-green-600">✓ {t.settings.signatureEnabled}</span>
                           ) : (
-                            <span className="text-yellow-600">未启用</span>
+                            <span className="text-yellow-600">{t.settings.signatureDisabled}</span>
                           )}
                         </div>
                         {testResults.feishu && (
@@ -520,10 +523,10 @@ export default function SettingsPage() {
                       {testingChannel === 'feishu' ? (
                         <>
                           <Loader2 className="h-4 w-4 mr-1 animate-spin" />
-                          发送中...
+                          {t.settings.sending}
                         </>
                       ) : (
-                        '发送测试'
+                        t.settings.sendTest
                       )}
                     </Button>
                   </div>
@@ -532,11 +535,11 @@ export default function SettingsPage() {
 
               <div className="bg-blue-50 border-2 border-blue-200 rounded-lg p-3">
                 <div className="text-sm text-blue-900">
-                  <strong>💡 提示：</strong>点击"发送测试"按钮后：
+                  <strong>💡 {t.settings.testTip}</strong>
                   <ul className="mt-1 ml-4 list-disc space-y-0.5">
-                    <li>邮件通知：检查您的邮箱收件箱</li>
-                    <li>钉钉通知：检查您的钉钉群消息</li>
-                    <li>飞书通知：检查您的飞书群消息</li>
+                    <li>{t.settings.checkEmail}</li>
+                    <li>{t.settings.checkDingtalk}</li>
+                    <li>{t.settings.checkFeishu}</li>
                   </ul>
                 </div>
               </div>
@@ -548,32 +551,32 @@ export default function SettingsPage() {
       {/* 数据管理 */}
       <Card>
         <CardHeader>
-          <CardTitle>数据管理</CardTitle>
-          <CardDescription>导出或删除您的数据</CardDescription>
+          <CardTitle>{t.settings.dataManagement}</CardTitle>
+          <CardDescription>{t.settings.dataManagementDescription}</CardDescription>
         </CardHeader>
         <CardContent>
           <div className="space-y-4">
             <div className="flex items-center justify-between">
               <div>
-                <div className="font-medium text-headline">导出数据</div>
+                <div className="font-medium text-headline">{t.settings.exportData}</div>
                 <div className="text-sm text-sub-headline">
-                  下载您的所有订阅数据
+                  {t.settings.exportDataDescription}
                 </div>
               </div>
               <Button variant="outline" disabled>
-                导出 CSV
+                {t.settings.exportCSV}
               </Button>
             </div>
             <div className="border-t-2 border-stroke pt-4">
               <div className="flex items-center justify-between">
                 <div>
-                  <div className="font-medium text-red-600">删除账户</div>
+                  <div className="font-medium text-red-600">{t.settings.deleteAccount}</div>
                   <div className="text-sm text-sub-headline">
-                    永久删除您的账户和所有数据
+                    {t.settings.deleteAccountWarning}
                   </div>
                 </div>
                 <Button variant="destructive" disabled>
-                  删除账户
+                  {t.settings.deleteAccount}
                 </Button>
               </div>
             </div>
@@ -584,19 +587,19 @@ export default function SettingsPage() {
       {/* 关于 */}
       <Card>
         <CardHeader>
-          <CardTitle>关于</CardTitle>
+          <CardTitle>{t.settings.about}</CardTitle>
         </CardHeader>
         <CardContent>
           <div className="space-y-2 text-sm text-sub-headline">
-            <p>SubTrack - 订阅管理系统</p>
-            <p>版本: 1.0.0</p>
+            <p>{t.settings.appTitle}</p>
+            <p>{t.settings.version}: 1.0.0</p>
             <p>
               <a href="#" className="text-highlight hover:underline">
-                使用条款
+                {t.settings.termsOfService}
               </a>
               {' • '}
               <a href="#" className="text-highlight hover:underline">
-                隐私政策
+                {t.settings.privacyPolicy}
               </a>
             </p>
           </div>
