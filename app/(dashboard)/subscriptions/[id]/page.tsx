@@ -14,6 +14,7 @@ import {
   Trash2,
   ArrowLeft,
 } from 'lucide-react'
+import { useTranslation } from '@/hooks/use-translation'
 
 interface Subscription {
   id: number
@@ -38,6 +39,7 @@ export default function SubscriptionDetailPage({
 }: {
   params: { id: string }
 }) {
+  const t = useTranslation()
   const router = useRouter()
   const [subscription, setSubscription] = useState<Subscription | null>(null)
   const [isLoading, setIsLoading] = useState(true)
@@ -65,7 +67,7 @@ export default function SubscriptionDetailPage({
   }, [params.id, router])
 
   const handleDelete = async () => {
-    if (!confirm('Are you sure you want to delete this subscription?')) {
+    if (!confirm(t.subscription.deleteConfirm)) {
       return
     }
 
@@ -81,7 +83,7 @@ export default function SubscriptionDetailPage({
       }
     } catch (error) {
       console.error('Failed to delete subscription:', error)
-      alert('Failed to delete subscription')
+      alert(t.errors.deleteFailed)
     } finally {
       setIsDeleting(false)
     }
@@ -108,7 +110,7 @@ export default function SubscriptionDetailPage({
           className="mb-4 gap-2"
         >
           <ArrowLeft className="h-4 w-4" />
-          Back
+          {t.common.back}
         </Button>
         <h1 className="text-3xl font-bold text-headline">
           {subscription.name}
@@ -127,7 +129,7 @@ export default function SubscriptionDetailPage({
                   </Badge>
                 )}
                 <Badge variant={subscription.isActive ? 'success' : 'outline'}>
-                  {subscription.isActive ? 'Active' : 'Cancelled'}
+                  {subscription.isActive ? t.common.active : t.common.cancelled}
                 </Badge>
               </div>
             </div>
@@ -146,7 +148,7 @@ export default function SubscriptionDetailPage({
             <div className="space-y-4">
               <div>
                 <div className="text-sm text-sub-headline mb-1">
-                  First Billing Date
+                  {t.subscription.firstBillingDate}
                 </div>
                 <div className="flex items-center gap-2">
                   <Calendar className="h-4 w-4 text-highlight" />
@@ -158,7 +160,7 @@ export default function SubscriptionDetailPage({
 
               <div>
                 <div className="text-sm text-sub-headline mb-1">
-                  Next Billing Date
+                  {t.subscription.nextBillingDate}
                 </div>
                 <div className="flex items-center gap-2">
                   <Calendar className="h-4 w-4 text-highlight" />
@@ -168,12 +170,12 @@ export default function SubscriptionDetailPage({
                 </div>
                 <div className="text-sm text-sub-headline mt-1">
                   {subscription.daysUntilRenewal === 0
-                    ? 'Renewing today'
+                    ? t.subscription.renewingToday
                     : subscription.daysUntilRenewal === 1
-                    ? 'Renewing tomorrow'
+                    ? t.subscription.renewingTomorrow
                     : subscription.daysUntilRenewal > 0
-                    ? `Renewing in ${subscription.daysUntilRenewal} days`
-                    : `Overdue by ${Math.abs(subscription.daysUntilRenewal)} days`}
+                    ? t.subscription.renewingInDays.replace('{days}', subscription.daysUntilRenewal.toString())
+                    : t.subscription.overdueDays.replace('{days}', Math.abs(subscription.daysUntilRenewal).toString())}
                 </div>
               </div>
             </div>
@@ -181,16 +183,16 @@ export default function SubscriptionDetailPage({
             <div className="space-y-4">
               <div>
                 <div className="text-sm text-sub-headline mb-1">
-                  Reminder Settings
+                  {t.subscription.reminderSettings}
                 </div>
                 <div className="font-medium">
-                  {subscription.remindDaysBefore} days before renewal
+                  {t.subscription.daysBeforeRenewal.replace('{days}', subscription.remindDaysBefore.toString())}
                 </div>
               </div>
 
               {subscription.websiteUrl && (
                 <div>
-                  <div className="text-sm text-sub-headline mb-1">Website</div>
+                  <div className="text-sm text-sub-headline mb-1">{t.subscription.website}</div>
                   <a
                     href={subscription.websiteUrl}
                     target="_blank"
@@ -207,7 +209,7 @@ export default function SubscriptionDetailPage({
 
           {subscription.notes && (
             <div>
-              <div className="text-sm text-sub-headline mb-1">Notes</div>
+              <div className="text-sm text-sub-headline mb-1">{t.subscription.notes}</div>
               <p className="text-card-paragraph whitespace-pre-wrap">
                 {subscription.notes}
               </p>
@@ -223,7 +225,7 @@ export default function SubscriptionDetailPage({
               className="flex-1 gap-2"
             >
               <Edit className="h-4 w-4" />
-              Edit
+              {t.common.edit}
             </Button>
             <Button
               variant="destructive"
@@ -232,7 +234,7 @@ export default function SubscriptionDetailPage({
               className="flex-1 gap-2"
             >
               <Trash2 className="h-4 w-4" />
-              {isDeleting ? 'Deleting...' : 'Delete'}
+              {isDeleting ? t.subscription.deleting : t.common.delete}
             </Button>
           </div>
         </CardContent>
