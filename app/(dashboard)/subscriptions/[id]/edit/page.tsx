@@ -12,6 +12,7 @@ import { Badge } from '@/components/ui/badge'
 import { COMMON_SERVICES, getLogoFromDomain } from '@/lib/common-services'
 import dayjs from 'dayjs'
 import { ArrowLeft } from 'lucide-react'
+import { useTranslation } from '@/hooks/use-translation'
 
 interface Subscription {
   id: number
@@ -35,6 +36,7 @@ export default function EditSubscriptionPage({
   params: { id: string }
 }) {
   const router = useRouter()
+  const t = useTranslation()
   const [isLoading, setIsLoading] = useState(true)
   const [isSaving, setIsSaving] = useState(false)
   const [error, setError] = useState('')
@@ -127,10 +129,10 @@ export default function EditSubscriptionPage({
       if (data.success) {
         router.push(`/subscriptions/${params.id}`)
       } else {
-        setError(data.error.message || '更新订阅失败')
+        setError(data.error.message || t.errors.updateFailed)
       }
     } catch (err) {
-      setError('发生错误，请重试')
+      setError(t.errors.unknownError)
     } finally {
       setIsSaving(false)
     }
@@ -168,15 +170,15 @@ export default function EditSubscriptionPage({
           className="mb-4 gap-2"
         >
           <ArrowLeft className="h-4 w-4" />
-          返回
+          {t.common.back}
         </Button>
-        <h1 className="text-3xl font-bold text-headline">编辑订阅</h1>
-        <p className="text-sub-headline mt-1">修改 {subscription.name} 的信息</p>
+        <h1 className="text-3xl font-bold text-headline">{t.subscription.editTitle}</h1>
+        <p className="text-sub-headline mt-1">{t.subscription.editDesc.replace('{name}', subscription.name)}</p>
       </div>
 
       <Card>
         <CardHeader>
-          <CardTitle>订阅详情</CardTitle>
+          <CardTitle>{t.subscription.detailsTitle}</CardTitle>
         </CardHeader>
         <CardContent>
           <form onSubmit={handleSubmit} className="space-y-6">
@@ -189,21 +191,21 @@ export default function EditSubscriptionPage({
             {/* 订阅名称 */}
             <div className="space-y-2">
               <Label htmlFor="name">
-                订阅名称 <span className="text-red-500">*</span>
+                {t.subscription.name} <span className="text-red-500">*</span>
               </Label>
               <Input
                 id="name"
                 name="name"
                 value={formData.name}
                 onChange={handleChange}
-                placeholder="例如: Netflix"
+                placeholder={t.subscription.namePlaceholder}
                 required
               />
             </div>
 
             {/* Logo 选择器 */}
             <div className="space-y-3 p-4 bg-card-background rounded-lg">
-              <Label>图标/Logo（可选）</Label>
+              <Label>{t.subscription.iconLogoOptional}</Label>
 
               {/* 当前图标预览 */}
               {formData.logoUrl && (
@@ -217,13 +219,13 @@ export default function EditSubscriptionPage({
                       setFormData({ ...formData, logoUrl: '' })
                     }}
                   />
-                  <span className="text-sm text-sub-headline">当前图标</span>
+                  <span className="text-sm text-sub-headline">{t.subscription.currentIcon}</span>
                 </div>
               )}
 
               {/* 常见服务快速选择 */}
               <div>
-                <p className="text-sm text-sub-headline mb-2">快速选择常见服务：</p>
+                <p className="text-sm text-sub-headline mb-2">{t.subscription.quickSelectLabel}</p>
                 <div className="grid grid-cols-4 sm:grid-cols-6 gap-2">
                   {COMMON_SERVICES.slice(0, 12).map((service) => (
                     <button
@@ -253,7 +255,7 @@ export default function EditSubscriptionPage({
 
               {/* 自定义 Logo URL */}
               <div className="space-y-2">
-                <Label htmlFor="logoUrl">或输入自定义图标 URL</Label>
+                <Label htmlFor="logoUrl">{t.subscription.customIconUrl}</Label>
                 <Input
                   id="logoUrl"
                   name="logoUrl"
@@ -275,7 +277,7 @@ export default function EditSubscriptionPage({
                         }
                       }}
                     >
-                      获取 Favicon
+                      {t.subscription.fetchFavicon}
                     </Button>
                     <Button
                       type="button"
@@ -288,7 +290,7 @@ export default function EditSubscriptionPage({
                         }
                       }}
                     >
-                      Google 图标
+                      {t.subscription.fetchGoogle}
                     </Button>
                     <Button
                       type="button"
@@ -301,12 +303,12 @@ export default function EditSubscriptionPage({
                         }
                       }}
                     >
-                      Clearbit Logo
+                      {t.subscription.fetchClearbit}
                     </Button>
                   </div>
                 )}
                 <p className="text-xs text-sub-headline">
-                  提示：输入官网链接后，可选择不同方式自动获取图标
+                  {t.subscription.iconTip}
                 </p>
               </div>
             </div>
@@ -315,7 +317,7 @@ export default function EditSubscriptionPage({
             <div className="grid grid-cols-2 gap-4">
               <div className="space-y-2">
                 <Label htmlFor="amount">
-                  金额 <span className="text-red-500">*</span>
+                  {t.subscription.amount} <span className="text-red-500">*</span>
                 </Label>
                 <Input
                   id="amount"
@@ -324,22 +326,22 @@ export default function EditSubscriptionPage({
                   step="0.01"
                   value={formData.amount}
                   onChange={handleChange}
-                  placeholder="30.00"
+                  placeholder={t.subscription.amountPlaceholder}
                   required
                 />
               </div>
               <div className="space-y-2">
-                <Label htmlFor="currency">货币</Label>
+                <Label htmlFor="currency">{t.subscription.currency}</Label>
                 <Select
                   id="currency"
                   name="currency"
                   value={formData.currency}
                   onChange={handleChange}
                 >
-                  <option value="CNY">人民币 (¥)</option>
-                  <option value="USD">美元 ($)</option>
-                  <option value="EUR">欧元 (€)</option>
-                  <option value="GBP">英镑 (£)</option>
+                  <option value="CNY">{t.subscription.currencies.CNY}</option>
+                  <option value="USD">{t.subscription.currencies.USD}</option>
+                  <option value="EUR">{t.subscription.currencies.EUR}</option>
+                  <option value="GBP">{t.subscription.currencies.GBP}</option>
                 </Select>
               </div>
             </div>
@@ -347,7 +349,7 @@ export default function EditSubscriptionPage({
             {/* 计费周期 */}
             <div className="space-y-2">
               <Label htmlFor="billingCycle">
-                计费周期 <span className="text-red-500">*</span>
+                {t.subscription.billingCycle} <span className="text-red-500">*</span>
               </Label>
               <Select
                 id="billingCycle"
@@ -355,11 +357,11 @@ export default function EditSubscriptionPage({
                 value={formData.billingCycle}
                 onChange={handleChange}
               >
-                <option value="monthly">每月</option>
-                <option value="quarterly">每季度</option>
-                <option value="semi-annually">每半年</option>
-                <option value="annually">每年</option>
-                <option value="custom">自定义</option>
+                <option value="monthly">{t.subscription.cycles.monthly}</option>
+                <option value="quarterly">{t.subscription.cycles.quarterly}</option>
+                <option value="semi-annually">{t.subscription.cycles.semiAnnually}</option>
+                <option value="annually">{t.subscription.cycles.annually}</option>
+                <option value="custom">{t.subscription.cycles.custom}</option>
               </Select>
             </div>
 
@@ -367,7 +369,7 @@ export default function EditSubscriptionPage({
             {formData.billingCycle === 'custom' && (
               <div className="space-y-2">
                 <Label htmlFor="customCycleDays">
-                  自定义周期天数 <span className="text-red-500">*</span>
+                  {t.subscription.customCycleDays} <span className="text-red-500">*</span>
                 </Label>
                 <Input
                   id="customCycleDays"
@@ -384,7 +386,7 @@ export default function EditSubscriptionPage({
             {/* 首次计费日期 */}
             <div className="space-y-2">
               <Label htmlFor="firstBillingDate">
-                首次计费日期 <span className="text-red-500">*</span>
+                {t.subscription.firstBillingDate} <span className="text-red-500">*</span>
               </Label>
               <Input
                 id="firstBillingDate"
@@ -398,40 +400,40 @@ export default function EditSubscriptionPage({
 
             {/* 分类 */}
             <div className="space-y-2">
-              <Label htmlFor="category">分类</Label>
+              <Label htmlFor="category">{t.subscription.category}</Label>
               <Select
                 id="category"
                 name="category"
                 value={formData.category}
                 onChange={handleChange}
               >
-                <option value="">选择分类</option>
-                <option value="entertainment">娱乐</option>
-                <option value="productivity">工作</option>
-                <option value="education">学习</option>
-                <option value="fitness">健身</option>
-                <option value="music">音乐</option>
-                <option value="cloud">云服务</option>
-                <option value="other">其他</option>
+                <option value="">{t.subscription.categorySelect}</option>
+                <option value="entertainment">{t.subscription.categories.entertainment}</option>
+                <option value="productivity">{t.subscription.categories.productivity}</option>
+                <option value="education">{t.subscription.categories.education}</option>
+                <option value="fitness">{t.subscription.categories.fitness}</option>
+                <option value="music">{t.subscription.categories.music}</option>
+                <option value="cloud">{t.subscription.categories.cloud}</option>
+                <option value="other">{t.subscription.categories.other}</option>
               </Select>
             </div>
 
             {/* 网站链接 */}
             <div className="space-y-2">
-              <Label htmlFor="websiteUrl">网站链接</Label>
+              <Label htmlFor="websiteUrl">{t.subscription.websiteUrl}</Label>
               <Input
                 id="websiteUrl"
                 name="websiteUrl"
                 type="url"
                 value={formData.websiteUrl}
                 onChange={handleChange}
-                placeholder="https://example.com"
+                placeholder={t.subscription.websiteUrlPlaceholder}
               />
             </div>
 
             {/* 提醒天数 */}
             <div className="space-y-2">
-              <Label htmlFor="remindDaysBefore">提前提醒天数</Label>
+              <Label htmlFor="remindDaysBefore">{t.subscription.remindDaysBefore}</Label>
               <Input
                 id="remindDaysBefore"
                 name="remindDaysBefore"
@@ -441,26 +443,26 @@ export default function EditSubscriptionPage({
                 min="0"
               />
               <p className="text-xs text-sub-headline">
-                在续费日期前 {formData.remindDaysBefore} 天提醒
+                {t.subscription.daysBeforeRenewal.replace('{days}', formData.remindDaysBefore)}
               </p>
             </div>
 
             {/* 备注 */}
             <div className="space-y-2">
-              <Label htmlFor="notes">备注</Label>
+              <Label htmlFor="notes">{t.subscription.notes}</Label>
               <Textarea
                 id="notes"
                 name="notes"
                 value={formData.notes}
                 onChange={handleChange}
-                placeholder="添加任何备注信息..."
+                placeholder={t.subscription.notesPlaceholder}
                 rows={3}
               />
             </div>
 
             {/* 订阅状态 */}
             <div className="space-y-2">
-              <Label htmlFor="isActive">订阅状态</Label>
+              <Label htmlFor="isActive">{t.subscription.status}</Label>
               <Select
                 id="isActive"
                 name="isActive"
@@ -472,12 +474,12 @@ export default function EditSubscriptionPage({
                   })
                 }
               >
-                <option value="true">活跃</option>
-                <option value="false">已取消</option>
+                <option value="true">{t.common.active}</option>
+                <option value="false">{t.common.inactive}</option>
               </Select>
               {!formData.isActive && (
                 <div className="flex items-center gap-2 mt-2">
-                  <Badge variant="outline">已取消的订阅将不计入统计</Badge>
+                  <Badge variant="outline">{t.subscription.canceledNote}</Badge>
                 </div>
               )}
             </div>
@@ -485,7 +487,7 @@ export default function EditSubscriptionPage({
             {/* 按钮 */}
             <div className="flex gap-4 pt-4">
               <Button type="submit" disabled={isSaving} className="flex-1">
-                {isSaving ? '保存中...' : '保存更改'}
+                {isSaving ? t.subscription.saving : t.subscription.saveChanges}
               </Button>
               <Button
                 type="button"
@@ -493,7 +495,7 @@ export default function EditSubscriptionPage({
                 onClick={() => router.back()}
                 disabled={isSaving}
               >
-                取消
+                {t.common.cancel}
               </Button>
             </div>
           </form>
