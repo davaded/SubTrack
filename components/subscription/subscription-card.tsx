@@ -4,6 +4,7 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
 import { Calendar, ExternalLink } from 'lucide-react'
+import { useTranslation } from '@/hooks/use-translation'
 
 interface Subscription {
   id: number
@@ -23,6 +24,7 @@ interface SubscriptionCardProps {
 }
 
 export function SubscriptionCard({ subscription }: SubscriptionCardProps) {
+  const t = useTranslation()
   const daysUntil = subscription.daysUntilRenewal ?? 0
   const isUpcoming = daysUntil <= 7 && daysUntil >= 0
 
@@ -76,7 +78,7 @@ export function SubscriptionCard({ subscription }: SubscriptionCardProps) {
           <div className="flex items-center text-sm text-sub-headline">
             <Calendar className="h-4 w-4 mr-2" />
             <span>
-              Next billing: {dayjs(subscription.nextBillingDate).format('MMM DD, YYYY')}
+              {t.subscription.nextBilling}{dayjs(subscription.nextBillingDate).format('MMM DD, YYYY')}
             </span>
           </div>
           {daysUntil !== undefined && (
@@ -86,19 +88,19 @@ export function SubscriptionCard({ subscription }: SubscriptionCardProps) {
               }`}
             >
               {daysUntil === 0
-                ? 'Renewing today'
+                ? t.subscription.renewingToday
                 : daysUntil === 1
-                ? 'Renewing tomorrow'
+                ? t.subscription.renewingTomorrow
                 : daysUntil > 0
-                ? `Renewing in ${daysUntil} days`
-                : `Overdue by ${Math.abs(daysUntil)} days`}
+                ? t.subscription.renewingInDays.replace('{days}', daysUntil.toString())
+                : t.subscription.overdueDays.replace('{days}', Math.abs(daysUntil).toString())}
             </div>
           )}
           <div className="flex gap-2 pt-2">
             <Link href={`/subscriptions/${subscription.id}`} className="flex-1">
               <Button variant="outline" size="sm" className="w-full">
                 <ExternalLink className="h-4 w-4 mr-2" />
-                View Details
+                {t.subscription.viewDetails}
               </Button>
             </Link>
           </div>
