@@ -16,6 +16,7 @@ import {
   YAxis,
   CartesianGrid,
 } from 'recharts'
+import { useTranslation } from '@/hooks/use-translation'
 
 interface Stats {
   totalMonthly: number
@@ -35,19 +36,24 @@ const COLORS = {
   other: '#594a4e',
 }
 
-const CATEGORY_LABELS: Record<string, string> = {
-  entertainment: '娱乐',
-  productivity: '工作',
-  education: '学习',
-  fitness: '健身',
-  music: '音乐',
-  cloud: '云服务',
-  other: '其他',
-}
-
 export default function StatisticsPage() {
+  const t = useTranslation()
   const [stats, setStats] = useState<Stats | null>(null)
   const [isLoading, setIsLoading] = useState(true)
+
+  // 动态分类标签
+  const getCategoryLabel = (key: string): string => {
+    const labels: Record<string, string> = {
+      entertainment: t.subscription.categories.entertainment,
+      productivity: t.subscription.categories.productivity,
+      education: t.subscription.categories.education,
+      fitness: t.subscription.categories.fitness,
+      music: t.subscription.categories.music,
+      cloud: t.subscription.categories.cloud,
+      other: t.subscription.categories.other,
+    }
+    return labels[key] || key
+  }
 
   useEffect(() => {
     async function fetchStats() {
@@ -78,21 +84,21 @@ export default function StatisticsPage() {
   if (!stats) {
     return (
       <div className="text-center py-12">
-        <p className="text-sub-headline">加载统计数据失败</p>
+        <p className="text-sub-headline">{t.analytics.loadFailed}</p>
       </div>
     )
   }
 
   // 准备饼图数据
   const categoryData = Object.entries(stats.byCategory).map(([key, value]) => ({
-    name: CATEGORY_LABELS[key] || key,
+    name: getCategoryLabel(key),
     value: value,
     category: key,
   }))
 
   // 准备柱状图数据
   const barData = Object.entries(stats.byCategory).map(([key, value]) => ({
-    category: CATEGORY_LABELS[key] || key,
+    category: getCategoryLabel(key),
     monthly: value,
     yearly: value * 12,
   }))
@@ -105,8 +111,8 @@ export default function StatisticsPage() {
   return (
     <div className="space-y-8">
       <div>
-        <h1 className="text-3xl font-bold text-headline">统计分析</h1>
-        <p className="text-sub-headline mt-1">查看您的订阅支出详情</p>
+        <h1 className="text-3xl font-bold text-headline">{t.analytics.title}</h1>
+        <p className="text-sub-headline mt-1">{t.analytics.description}</p>
       </div>
 
       {/* 总览卡片 */}
@@ -114,56 +120,56 @@ export default function StatisticsPage() {
         <Card>
           <CardHeader className="pb-2">
             <CardTitle className="text-sm font-medium text-sub-headline">
-              月度支出
+              {t.analytics.monthlyCost}
             </CardTitle>
           </CardHeader>
           <CardContent>
             <div className="text-3xl font-bold text-headline">
               ¥{stats.totalMonthly.toFixed(2)}
             </div>
-            <p className="text-xs text-sub-headline mt-1">每月总计</p>
+            <p className="text-xs text-sub-headline mt-1">{t.analytics.monthlyTotal}</p>
           </CardContent>
         </Card>
 
         <Card>
           <CardHeader className="pb-2">
             <CardTitle className="text-sm font-medium text-sub-headline">
-              年度支出
+              {t.analytics.yearlyCost}
             </CardTitle>
           </CardHeader>
           <CardContent>
             <div className="text-3xl font-bold text-headline">
               ¥{stats.totalYearly.toFixed(2)}
             </div>
-            <p className="text-xs text-sub-headline mt-1">每年总计</p>
+            <p className="text-xs text-sub-headline mt-1">{t.analytics.yearlyTotal}</p>
           </CardContent>
         </Card>
 
         <Card>
           <CardHeader className="pb-2">
             <CardTitle className="text-sm font-medium text-sub-headline">
-              活跃订阅
+              {t.subscription.activeSubscriptions}
             </CardTitle>
           </CardHeader>
           <CardContent>
             <div className="text-3xl font-bold text-headline">
               {stats.activeCount}
             </div>
-            <p className="text-xs text-sub-headline mt-1">个服务</p>
+            <p className="text-xs text-sub-headline mt-1">{t.analytics.services}</p>
           </CardContent>
         </Card>
 
         <Card>
           <CardHeader className="pb-2">
             <CardTitle className="text-sm font-medium text-sub-headline">
-              已取消订阅
+              {t.analytics.cancelledSubscriptions}
             </CardTitle>
           </CardHeader>
           <CardContent>
             <div className="text-3xl font-bold text-headline">
               {stats.cancelledCount}
             </div>
-            <p className="text-xs text-sub-headline mt-1">个服务</p>
+            <p className="text-xs text-sub-headline mt-1">{t.analytics.services}</p>
           </CardContent>
         </Card>
       </div>
@@ -174,7 +180,7 @@ export default function StatisticsPage() {
           {/* 饼图 - 分类占比 */}
           <Card>
             <CardHeader>
-              <CardTitle>分类支出占比</CardTitle>
+              <CardTitle>{t.analytics.categorySpending}</CardTitle>
             </CardHeader>
             <CardContent>
               <ResponsiveContainer width="100%" height={300}>
@@ -212,7 +218,7 @@ export default function StatisticsPage() {
           {/* 柱状图 - 分类对比 */}
           <Card>
             <CardHeader>
-              <CardTitle>月度/年度支出对比</CardTitle>
+              <CardTitle>{t.analytics.monthlyYearlyComparison}</CardTitle>
             </CardHeader>
             <CardContent>
               <ResponsiveContainer width="100%" height={300}>
@@ -222,8 +228,8 @@ export default function StatisticsPage() {
                   <YAxis />
                   <Tooltip formatter={(value: number) => `¥${value.toFixed(2)}`} />
                   <Legend />
-                  <Bar dataKey="monthly" fill="#ff8ba7" name="月度" />
-                  <Bar dataKey="yearly" fill="#ffc6c7" name="年度" />
+                  <Bar dataKey="monthly" fill="#ff8ba7" name={t.analytics.monthly} />
+                  <Bar dataKey="yearly" fill="#ffc6c7" name={t.analytics.yearly} />
                 </BarChart>
               </ResponsiveContainer>
             </CardContent>
@@ -232,7 +238,7 @@ export default function StatisticsPage() {
       ) : (
         <Card>
           <CardContent className="py-12 text-center">
-            <p className="text-sub-headline">暂无分类数据</p>
+            <p className="text-sub-headline">{t.analytics.noCategoryData}</p>
           </CardContent>
         </Card>
       )}
@@ -241,7 +247,7 @@ export default function StatisticsPage() {
       {categoryData.length > 0 && (
         <Card>
           <CardHeader>
-            <CardTitle>分类详情</CardTitle>
+            <CardTitle>{t.analytics.categoryDetails}</CardTitle>
           </CardHeader>
           <CardContent>
             <div className="space-y-4">
@@ -271,7 +277,7 @@ export default function StatisticsPage() {
                           ¥{item.value.toFixed(2)}
                         </div>
                         <div className="text-xs text-sub-headline">
-                          月度 / ¥{(item.value * 12).toFixed(2)} 年度
+                          {t.analytics.monthly} / ¥{(item.value * 12).toFixed(2)} {t.analytics.yearly}
                         </div>
                       </div>
                     </div>
