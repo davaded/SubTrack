@@ -4,7 +4,7 @@ import Link from 'next/link'
 import { usePathname } from 'next/navigation'
 import { cn } from '@/lib/utils'
 import { Home, CreditCard, BarChart3, Settings } from 'lucide-react'
-import { useTranslation } from '@/hooks/use-translation'
+import { useTranslation } from '@/lib/hooks/use-translation'
 
 export function MobileNav() {
   const pathname = usePathname()

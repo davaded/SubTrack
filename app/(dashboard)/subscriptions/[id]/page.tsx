@@ -14,7 +14,7 @@ import {
   Trash2,
   ArrowLeft,
 } from 'lucide-react'
-import { useTranslation } from '@/hooks/use-translation'
+import { useTranslation } from '@/lib/hooks/use-translation'
 
 interface Subscription {
   id: number

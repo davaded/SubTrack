@@ -4,7 +4,7 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
 import { Calendar, ExternalLink } from 'lucide-react'
-import { useTranslation } from '@/hooks/use-translation'
+import { useTranslation } from '@/lib/hooks/use-translation'
 
 interface Subscription {
   id: number

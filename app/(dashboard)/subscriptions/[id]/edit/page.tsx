@@ -12,7 +12,7 @@ import { Badge } from '@/components/ui/badge'
 import { COMMON_SERVICES, getLogoFromDomain } from '@/lib/common-services'
 import dayjs from 'dayjs'
 import { ArrowLeft } from 'lucide-react'
-import { useTranslation } from '@/hooks/use-translation'
+import { useTranslation } from '@/lib/hooks/use-translation'
 
 interface Subscription {
   id: number

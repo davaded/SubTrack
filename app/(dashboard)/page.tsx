@@ -6,7 +6,7 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
 import { SubscriptionCard } from '@/components/subscription/subscription-card'
 import { DollarSign, CreditCard, Plus, Bell } from 'lucide-react'
-import { useTranslation } from '@/hooks/use-translation'
+import { useTranslation } from '@/lib/hooks/use-translation'
 import { getCurrencySymbol } from '@/lib/currency'
 
 interface Stats {
