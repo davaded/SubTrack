@@ -15,13 +15,18 @@ export const zh = {
     all: '全部',
     active: '活跃',
     inactive: '已取消',
+    appName: 'SubTrack',
+    cancelled: '已取消',
+    comingSoon: '即将推出',
   },
 
   // 导航
   nav: {
     dashboard: '首页',
     subscriptions: '订阅管理',
+    subscriptionsShort: '订阅',
     analytics: '统计分析',
+    analyticsShort: '统计',
     settings: '设置',
     logout: '退出',
     profile: '个人资料',
@@ -41,6 +46,15 @@ export const zh = {
     registerNow: '立即注册',
     welcomeBack: '欢迎回来',
     createAccount: '创建账号',
+    signIn: '登录',
+    signUp: '注册',
+    signingIn: '登录中...',
+    creatingAccount: '创建账号中...',
+    loginDescription: '登录以管理您的订阅',
+    registerDescription: '注册以开始追踪您的订阅',
+    emailPlaceholder: 'your@email.com',
+    nameOptional: '姓名（可选）',
+    namePlaceholder: '您的姓名',
   },
 
   // 订阅管理
@@ -52,6 +66,13 @@ export const zh = {
     noSubscriptionsDesc: '点击上方按钮添加您的第一个订阅',
     totalSubscriptions: '总订阅数',
     activeSubscriptions: '活跃订阅',
+    manageDescription: '在一个地方管理您的所有订阅',
+    searchPlaceholder: '搜索订阅...',
+    allCategories: '全部分类',
+    noMatchingSubscriptions: '未找到符合条件的订阅',
+    addFirstSubscription: '添加您的第一个订阅',
+    viewDetails: '查看详情',
+    nextBilling: '下次计费：',
 
     // 表单
     createTitle: '添加订阅',
@@ -109,10 +130,15 @@ export const zh = {
 
     // 图标
     quickSelect: '快速选择常见服务',
+    quickSelectLabel: '快速选择常见服务：',
     iconSettings: '图标设置',
-    fetchFavicon: 'Favicon',
-    fetchGoogle: 'Google',
-    fetchClearbit: 'Clearbit',
+    iconLogoOptional: '图标/Logo（可选）',
+    currentIcon: '当前图标',
+    customIconUrl: '或输入自定义图标 URL',
+    iconTip: '提示：输入官网链接后，可选择不同方式自动获取图标',
+    fetchFavicon: '获取 Favicon',
+    fetchGoogle: 'Google 图标',
+    fetchClearbit: 'Clearbit Logo',
 
     // 按钮
     creating: '创建中...',
@@ -147,16 +173,22 @@ export const zh = {
     title: '仪表盘',
     welcome: '欢迎回来',
     overview: '概览',
+    overviewDescription: '您的订阅支出概览',
     monthlySpending: '本月支出',
+    monthlyCost: '月度支出',
+    perYear: '每年',
     upcomingRenewals: '即将续费',
     recentActivity: '最近活动',
     viewAll: '查看全部',
     noUpcoming: '暂无即将续费的订阅',
+    noUpcomingRenewals30Days: '未来 30 天内没有即将续费的订阅',
+    inNext30Days: '未来 30 天内',
   },
 
   // 统计
   analytics: {
     title: '统计分析',
+    description: '查看您的订阅支出详情',
     totalSpending: '总支出',
     avgMonthly: '月均支出',
     byCategory: '按分类统计',
@@ -165,19 +197,97 @@ export const zh = {
     thisMonth: '本月',
     lastMonth: '上月',
     thisYear: '今年',
+    monthlyTotal: '每月总计',
+    yearlyTotal: '每年总计',
+    monthlyCost: '月度支出',
+    yearlyCost: '年度支出',
+    cancelledSubscriptions: '已取消订阅',
+    services: '个服务',
+    categorySpending: '分类支出占比',
+    monthlyYearlyComparison: '月度/年度支出对比',
+    monthly: '月度',
+    yearly: '年度',
+    noCategoryData: '暂无分类数据',
+    categoryDetails: '分类详情',
+    loadFailed: '加载统计数据失败',
   },
 
   // 设置
   settings: {
     title: '设置',
+    description: '管理您的账户设置和偏好',
     profile: '个人资料',
+    profileDescription: '更新您的个人资料',
     preferences: '偏好设置',
     language: '语言',
     theme: '主题',
     notifications: '通知设置',
+    notificationsDescription: '管理您的通知偏好',
     account: '账户设置',
     changePassword: '修改密码',
+    changePasswordDescription: '为了安全，请定期更新您的密码',
     deleteAccount: '删除账户',
+    deleteAccountWarning: '永久删除您的账户和所有数据',
+
+    // 个人信息
+    emailLabel: '邮箱',
+    emailCannotChange: '邮箱无法修改',
+    nameLabel: '姓名',
+    namePlaceholder: '您的姓名',
+    defaultCurrency: '默认货币',
+    defaultCurrencyHint: '新添加的订阅将默认使用此货币',
+    profileUpdateSuccess: '个人信息更新成功',
+
+    // 密码
+    currentPassword: '当前密码',
+    newPassword: '新密码',
+    confirmNewPassword: '确认新密码',
+    passwordMinLength: '至少 6 位字符',
+    passwordChanging: '修改中...',
+    passwordChangeSuccess: '密码修改成功',
+    passwordChangeFailed: '密码修改失败，请检查当前密码是否正确',
+
+    // 通知
+    browserNotifications: '浏览器通知',
+    browserNotificationsDesc: '当订阅即将续费时通知您',
+    emailNotifications: '邮件通知',
+    emailNotificationsDesc: '接收续费提醒邮件',
+    notificationTest: '通知渠道测试',
+    notificationTestDesc: '测试您配置的通知渠道是否正常工作',
+    loadingConfig: '加载配置中...',
+    noChannelConfigured: '未配置任何通知渠道',
+    configureChannelHint: '请在项目的 .env 文件中配置至少一个通知渠道',
+    emailChannel: '邮件通知 (Resend)',
+    dingtalkChannel: '钉钉通知',
+    feishuChannel: '飞书通知',
+    webhookConfigured: 'Webhook：已配置',
+    signatureVerification: '签名验证',
+    signatureEnabled: '已启用',
+    signatureDisabled: '未启用',
+    sendTest: '发送测试',
+    sending: '发送中...',
+    testSuccess: '测试成功',
+    testFailed: '测试失败',
+    sender: '发件人',
+    receiver: '接收邮箱',
+    testTip: '提示：点击"发送测试"按钮后',
+    checkEmail: '邮件通知：检查您的邮箱收件箱',
+    checkDingtalk: '钉钉通知：检查您的钉钉群消息',
+    checkFeishu: '飞书通知：检查您的飞书群消息',
+
+    // 数据管理
+    dataManagement: '数据管理',
+    dataManagementDescription: '导出或删除您的数据',
+    exportData: '导出数据',
+    exportDataDescription: '下载您的所有订阅数据',
+    exportCSV: '导出 CSV',
+
+    // 关于
+    about: '关于',
+    appTitle: 'SubTrack - 订阅管理系统',
+    version: '版本',
+    termsOfService: '使用条款',
+    privacyPolicy: '隐私政策',
   },
 
   // 错误消息
@@ -193,6 +303,13 @@ export const zh = {
     loadFailed: '加载失败',
     saveFailed: '保存失败',
     deleteFailed: '删除失败',
+    updateFailed: '更新失败',
+  },
+
+  // 页面元数据
+  meta: {
+    title: 'SubTrack - 订阅管理系统',
+    description: '在一个地方管理您的所有订阅',
   },
 }
 

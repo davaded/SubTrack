@@ -4,10 +4,12 @@ import { useRouter } from 'next/navigation'
 import { useAuthStore } from '@/store/auth-store'
 import { Button } from '@/components/ui/button'
 import { LogOut } from 'lucide-react'
+import { useTranslation } from '@/hooks/use-translation'
 
 export function Header() {
   const router = useRouter()
   const { user, logout } = useAuthStore()
+  const t = useTranslation()
 
   const handleLogout = async () => {
     try {
@@ -23,7 +25,7 @@ export function Header() {
     <header className="border-b-2 border-stroke bg-main sticky top-0 z-50">
       <div className="container mx-auto px-4 py-4 flex items-center justify-between">
         <div className="flex items-center space-x-2">
-          <h1 className="text-2xl font-bold text-headline">SubTrack</h1>
+          <h1 className="text-2xl font-bold text-headline">{t.common.appName}</h1>
         </div>
         <div className="flex items-center space-x-4">
           {user && (
@@ -38,7 +40,7 @@ export function Header() {
                 className="gap-2"
               >
                 <LogOut className="h-4 w-4" />
-                Logout
+                {t.nav.logout}
               </Button>
             </>
           )}

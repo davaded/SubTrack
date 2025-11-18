@@ -4,16 +4,18 @@ import Link from 'next/link'
 import { usePathname } from 'next/navigation'
 import { cn } from '@/lib/utils'
 import { Home, CreditCard, BarChart3, Settings } from 'lucide-react'
-
-const navItems = [
-  { href: '/', label: '首页', icon: Home },
-  { href: '/subscriptions', label: '订阅管理', icon: CreditCard },
-  { href: '/statistics', label: '统计分析', icon: BarChart3 },
-  { href: '/settings', label: '设置', icon: Settings },
-]
+import { useTranslation } from '@/hooks/use-translation'
 
 export function Sidebar() {
   const pathname = usePathname()
+  const t = useTranslation()
+
+  const navItems = [
+    { href: '/', label: t.nav.dashboard, icon: Home },
+    { href: '/subscriptions', label: t.nav.subscriptions, icon: CreditCard },
+    { href: '/statistics', label: t.analytics.title, icon: BarChart3 },
+    { href: '/settings', label: t.nav.settings, icon: Settings },
+  ]
 
   return (
     <aside className="w-64 border-r-2 border-stroke bg-card-background min-h-screen">

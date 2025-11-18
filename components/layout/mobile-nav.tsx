@@ -4,16 +4,18 @@ import Link from 'next/link'
 import { usePathname } from 'next/navigation'
 import { cn } from '@/lib/utils'
 import { Home, CreditCard, BarChart3, Settings } from 'lucide-react'
-
-const navItems = [
-  { href: '/', label: '首页', icon: Home },
-  { href: '/subscriptions', label: '订阅', icon: CreditCard },
-  { href: '/statistics', label: '统计', icon: BarChart3 },
-  { href: '/settings', label: '设置', icon: Settings },
-]
+import { useTranslation } from '@/hooks/use-translation'
 
 export function MobileNav() {
   const pathname = usePathname()
+  const t = useTranslation()
+
+  const navItems = [
+    { href: '/', label: t.nav.dashboard, icon: Home },
+    { href: '/subscriptions', label: t.nav.subscriptionsShort, icon: CreditCard },
+    { href: '/statistics', label: t.nav.analyticsShort, icon: BarChart3 },
+    { href: '/settings', label: t.nav.settings, icon: Settings },
+  ]
 
   return (
     <nav className="fixed bottom-0 left-0 right-0 bg-main border-t-2 border-stroke lg:hidden z-50">

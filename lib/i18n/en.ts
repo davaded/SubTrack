@@ -17,13 +17,18 @@ export const en: Translation = {
     all: 'All',
     active: 'Active',
     inactive: 'Cancelled',
+    appName: 'SubTrack',
+    cancelled: 'Cancelled',
+    comingSoon: 'Coming Soon',
   },
 
   // Navigation
   nav: {
     dashboard: 'Dashboard',
     subscriptions: 'Subscriptions',
+    subscriptionsShort: 'Subs',
     analytics: 'Analytics',
+    analyticsShort: 'Stats',
     settings: 'Settings',
     logout: 'Logout',
     profile: 'Profile',
@@ -43,6 +48,15 @@ export const en: Translation = {
     registerNow: 'Register Now',
     welcomeBack: 'Welcome Back',
     createAccount: 'Create Account',
+    signIn: 'Sign In',
+    signUp: 'Sign Up',
+    signingIn: 'Signing in...',
+    creatingAccount: 'Creating account...',
+    loginDescription: 'Sign in to manage your subscriptions',
+    registerDescription: 'Sign up to start tracking your subscriptions',
+    emailPlaceholder: 'your@email.com',
+    nameOptional: 'Name (Optional)',
+    namePlaceholder: 'Your name',
   },
 
   // Subscription Management
@@ -54,6 +68,13 @@ export const en: Translation = {
     noSubscriptionsDesc: 'Click the button above to add your first subscription',
     totalSubscriptions: 'Total Subscriptions',
     activeSubscriptions: 'Active Subscriptions',
+    manageDescription: 'Manage all your subscriptions in one place',
+    searchPlaceholder: 'Search subscriptions...',
+    allCategories: 'All Categories',
+    noMatchingSubscriptions: 'No subscriptions found matching your criteria',
+    addFirstSubscription: 'Add Your First Subscription',
+    viewDetails: 'View Details',
+    nextBilling: 'Next billing:',
 
     // Form
     createTitle: 'Add Subscription',
@@ -111,10 +132,15 @@ export const en: Translation = {
 
     // Icons
     quickSelect: 'Quick Select Common Services',
+    quickSelectLabel: 'Quick Select Common Services:',
     iconSettings: 'Icon Settings',
-    fetchFavicon: 'Favicon',
-    fetchGoogle: 'Google',
-    fetchClearbit: 'Clearbit',
+    iconLogoOptional: 'Icon/Logo (Optional)',
+    currentIcon: 'Current Icon',
+    customIconUrl: 'Or enter custom icon URL',
+    iconTip: 'Tip: After entering the website URL, you can choose different ways to automatically fetch the icon',
+    fetchFavicon: 'Fetch Favicon',
+    fetchGoogle: 'Google Icon',
+    fetchClearbit: 'Clearbit Logo',
 
     // Buttons
     creating: 'Creating...',
@@ -149,16 +175,22 @@ export const en: Translation = {
     title: 'Dashboard',
     welcome: 'Welcome Back',
     overview: 'Overview',
+    overviewDescription: 'Overview of your subscription expenses',
     monthlySpending: 'Monthly Spending',
+    monthlyCost: 'Monthly Cost',
+    perYear: 'per year',
     upcomingRenewals: 'Upcoming Renewals',
     recentActivity: 'Recent Activity',
     viewAll: 'View All',
     noUpcoming: 'No upcoming renewals',
+    noUpcomingRenewals30Days: 'No upcoming renewals in the next 30 days',
+    inNext30Days: 'In the next 30 days',
   },
 
   // Analytics
   analytics: {
     title: 'Analytics',
+    description: 'View your subscription spending details',
     totalSpending: 'Total Spending',
     avgMonthly: 'Avg. Monthly',
     byCategory: 'By Category',
@@ -167,19 +199,97 @@ export const en: Translation = {
     thisMonth: 'This Month',
     lastMonth: 'Last Month',
     thisYear: 'This Year',
+    monthlyTotal: 'Total per month',
+    yearlyTotal: 'Total per year',
+    monthlyCost: 'Monthly Cost',
+    yearlyCost: 'Yearly Cost',
+    cancelledSubscriptions: 'Cancelled Subscriptions',
+    services: 'services',
+    categorySpending: 'Category Spending Distribution',
+    monthlyYearlyComparison: 'Monthly/Yearly Spending Comparison',
+    monthly: 'Monthly',
+    yearly: 'Yearly',
+    noCategoryData: 'No category data available',
+    categoryDetails: 'Category Details',
+    loadFailed: 'Failed to load statistics',
   },
 
   // Settings
   settings: {
     title: 'Settings',
+    description: 'Manage your account settings and preferences',
     profile: 'Profile',
+    profileDescription: 'Update your personal information',
     preferences: 'Preferences',
     language: 'Language',
     theme: 'Theme',
     notifications: 'Notifications',
+    notificationsDescription: 'Manage your notification preferences',
     account: 'Account',
     changePassword: 'Change Password',
+    changePasswordDescription: 'For security, please update your password regularly',
     deleteAccount: 'Delete Account',
+    deleteAccountWarning: 'Permanently delete your account and all data',
+
+    // Profile
+    emailLabel: 'Email',
+    emailCannotChange: 'Email cannot be changed',
+    nameLabel: 'Name',
+    namePlaceholder: 'Your name',
+    defaultCurrency: 'Default Currency',
+    defaultCurrencyHint: 'New subscriptions will use this currency by default',
+    profileUpdateSuccess: 'Profile updated successfully',
+
+    // Password
+    currentPassword: 'Current Password',
+    newPassword: 'New Password',
+    confirmNewPassword: 'Confirm New Password',
+    passwordMinLength: 'At least 6 characters',
+    passwordChanging: 'Changing...',
+    passwordChangeSuccess: 'Password changed successfully',
+    passwordChangeFailed: 'Failed to change password, please check your current password',
+
+    // Notifications
+    browserNotifications: 'Browser Notifications',
+    browserNotificationsDesc: 'Get notified when subscriptions are about to renew',
+    emailNotifications: 'Email Notifications',
+    emailNotificationsDesc: 'Receive renewal reminder emails',
+    notificationTest: 'Notification Channel Test',
+    notificationTestDesc: 'Test if your configured notification channels are working properly',
+    loadingConfig: 'Loading config...',
+    noChannelConfigured: 'No notification channel configured',
+    configureChannelHint: 'Please configure at least one notification channel in the .env file',
+    emailChannel: 'Email Notification (Resend)',
+    dingtalkChannel: 'DingTalk Notification',
+    feishuChannel: 'Feishu Notification',
+    webhookConfigured: 'Webhook: Configured',
+    signatureVerification: 'Signature Verification',
+    signatureEnabled: 'Enabled',
+    signatureDisabled: 'Disabled',
+    sendTest: 'Send Test',
+    sending: 'Sending...',
+    testSuccess: 'Test successful',
+    testFailed: 'Test failed',
+    sender: 'Sender',
+    receiver: 'Receiver',
+    testTip: 'Tip: After clicking "Send Test" button',
+    checkEmail: 'Email: Check your inbox',
+    checkDingtalk: 'DingTalk: Check your DingTalk group',
+    checkFeishu: 'Feishu: Check your Feishu group',
+
+    // Data Management
+    dataManagement: 'Data Management',
+    dataManagementDescription: 'Export or delete your data',
+    exportData: 'Export Data',
+    exportDataDescription: 'Download all your subscription data',
+    exportCSV: 'Export CSV',
+
+    // About
+    about: 'About',
+    appTitle: 'SubTrack - Subscription Manager',
+    version: 'Version',
+    termsOfService: 'Terms of Service',
+    privacyPolicy: 'Privacy Policy',
   },
 
   // Error Messages
@@ -195,5 +305,12 @@ export const en: Translation = {
     loadFailed: 'Failed to load',
     saveFailed: 'Failed to save',
     deleteFailed: 'Failed to delete',
+    updateFailed: 'Failed to update',
+  },
+
+  // Page Metadata
+  meta: {
+    title: 'SubTrack - Subscription Manager',
+    description: 'Manage all your subscriptions in one place',
   },
 }
