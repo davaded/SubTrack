@@ -179,6 +179,8 @@ export const en: Translation = {
     monthlySpending: 'Monthly Spending',
     monthlyCost: 'Monthly Cost',
     perYear: 'per year',
+    nextMonthForecast: 'Next Month Forecast',
+    subscriptionsRenewing: 'subscriptions renewing',
     upcomingRenewals: 'Upcoming Renewals',
     recentActivity: 'Recent Activity',
     viewAll: 'View All',

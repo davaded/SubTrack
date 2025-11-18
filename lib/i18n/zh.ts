@@ -177,6 +177,8 @@ export const zh = {
     monthlySpending: '本月支出',
     monthlyCost: '月度支出',
     perYear: '每年',
+    nextMonthForecast: '下月预计续费',
+    subscriptionsRenewing: '个订阅续费',
     upcomingRenewals: '即将续费',
     recentActivity: '最近活动',
     viewAll: '查看全部',
