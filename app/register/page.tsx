@@ -8,8 +8,10 @@ import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card'
+import { useTranslation } from '@/hooks/use-translation'
 
 export default function RegisterPage() {
+  const t = useTranslation()
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
   const [confirmPassword, setConfirmPassword] = useState('')
@@ -24,12 +26,12 @@ export default function RegisterPage() {
     setError('')
 
     if (password !== confirmPassword) {
-      setError('Passwords do not match')
+      setError(t.errors.passwordMismatch)
       return
     }
 
     if (password.length < 6) {
-      setError('Password must be at least 6 characters')
+      setError(t.errors.passwordTooShort)
       return
     }
 
@@ -48,10 +50,10 @@ export default function RegisterPage() {
         setUser(data.data.user)
         router.push('/')
       } else {
-        setError(data.error.message || 'Registration failed')
+        setError(data.error.message || t.errors.registerFailed)
       }
     } catch (err) {
-      setError('An error occurred. Please try again.')
+      setError(t.errors.unknownError)
     } finally {
       setIsLoading(false)
     }
@@ -61,8 +63,8 @@ export default function RegisterPage() {
     <div className="flex min-h-screen items-center justify-center p-4 bg-background">
       <Card className="w-full max-w-md">
         <CardHeader className="text-center">
-          <CardTitle className="text-3xl font-bold text-headline">Create Account</CardTitle>
-          <CardDescription>Sign up to start tracking your subscriptions</CardDescription>
+          <CardTitle className="text-3xl font-bold text-headline">{t.auth.createAccount}</CardTitle>
+          <CardDescription>{t.auth.registerDescription}</CardDescription>
         </CardHeader>
         <form onSubmit={handleSubmit}>
           <CardContent className="space-y-4">
@@ -72,28 +74,28 @@ export default function RegisterPage() {
               </div>
             )}
             <div className="space-y-2">
-              <Label htmlFor="name">Name (Optional)</Label>
+              <Label htmlFor="name">{t.auth.nameOptional}</Label>
               <Input
                 id="name"
                 type="text"
-                placeholder="Your name"
+                placeholder={t.auth.namePlaceholder}
                 value={name}
                 onChange={(e) => setName(e.target.value)}
               />
             </div>
             <div className="space-y-2">
-              <Label htmlFor="email">Email</Label>
+              <Label htmlFor="email">{t.auth.email}</Label>
               <Input
                 id="email"
                 type="email"
-                placeholder="your@email.com"
+                placeholder={t.auth.emailPlaceholder}
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
                 required
               />
             </div>
             <div className="space-y-2">
-              <Label htmlFor="password">Password</Label>
+              <Label htmlFor="password">{t.auth.password}</Label>
               <Input
                 id="password"
                 type="password"
@@ -104,7 +106,7 @@ export default function RegisterPage() {
               />
             </div>
             <div className="space-y-2">
-              <Label htmlFor="confirmPassword">Confirm Password</Label>
+              <Label htmlFor="confirmPassword">{t.auth.confirmPassword}</Label>
               <Input
                 id="confirmPassword"
                 type="password"
@@ -117,12 +119,12 @@ export default function RegisterPage() {
           </CardContent>
           <CardFooter className="flex flex-col space-y-4">
             <Button type="submit" className="w-full" disabled={isLoading}>
-              {isLoading ? 'Creating account...' : 'Sign Up'}
+              {isLoading ? t.auth.creatingAccount : t.auth.signUp}
             </Button>
             <p className="text-sm text-center text-sub-headline">
-              Already have an account?{' '}
+              {t.auth.hasAccount}{' '}
               <Link href="/login" className="text-highlight hover:underline font-medium">
-                Sign in
+                {t.auth.loginNow}
               </Link>
             </p>
           </CardFooter>
