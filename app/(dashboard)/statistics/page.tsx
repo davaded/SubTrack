@@ -17,12 +17,14 @@ import {
   CartesianGrid,
 } from 'recharts'
 import { useTranslation } from '@/hooks/use-translation'
+import { getCurrencySymbol } from '@/lib/currency'
 
 interface Stats {
   totalMonthly: number
   totalYearly: number
   activeCount: number
   cancelledCount: number
+  currency: string
   byCategory: Record<string, number>
 }
 
@@ -125,7 +127,7 @@ export default function StatisticsPage() {
           </CardHeader>
           <CardContent>
             <div className="text-3xl font-bold text-headline">
-              ¥{stats.totalMonthly.toFixed(2)}
+              {getCurrencySymbol(stats.currency)}{stats.totalMonthly.toFixed(2)}
             </div>
             <p className="text-xs text-sub-headline mt-1">{t.analytics.monthlyTotal}</p>
           </CardContent>
@@ -139,7 +141,7 @@ export default function StatisticsPage() {
           </CardHeader>
           <CardContent>
             <div className="text-3xl font-bold text-headline">
-              ¥{stats.totalYearly.toFixed(2)}
+              {getCurrencySymbol(stats.currency)}{stats.totalYearly.toFixed(2)}
             </div>
             <p className="text-xs text-sub-headline mt-1">{t.analytics.yearlyTotal}</p>
           </CardContent>
@@ -208,7 +210,7 @@ export default function StatisticsPage() {
                     ))}
                   </Pie>
                   <Tooltip
-                    formatter={(value: number) => `¥${value.toFixed(2)}`}
+                    formatter={(value: number) => `${getCurrencySymbol(stats.currency)}${value.toFixed(2)}`}
                   />
                 </PieChart>
               </ResponsiveContainer>
@@ -226,7 +228,7 @@ export default function StatisticsPage() {
                   <CartesianGrid strokeDasharray="3 3" />
                   <XAxis dataKey="category" />
                   <YAxis />
-                  <Tooltip formatter={(value: number) => `¥${value.toFixed(2)}`} />
+                  <Tooltip formatter={(value: number) => `${getCurrencySymbol(stats.currency)}${value.toFixed(2)}`} />
                   <Legend />
                   <Bar dataKey="monthly" fill="#ff8ba7" name={t.analytics.monthly} />
                   <Bar dataKey="yearly" fill="#ffc6c7" name={t.analytics.yearly} />
@@ -274,10 +276,10 @@ export default function StatisticsPage() {
                       </div>
                       <div className="text-right">
                         <div className="font-semibold text-headline">
-                          ¥{item.value.toFixed(2)}
+                          {getCurrencySymbol(stats.currency)}{item.value.toFixed(2)}
                         </div>
                         <div className="text-xs text-sub-headline">
-                          {t.analytics.monthly} / ¥{(item.value * 12).toFixed(2)} {t.analytics.yearly}
+                          {t.analytics.monthly} / {getCurrencySymbol(stats.currency)}{(item.value * 12).toFixed(2)} {t.analytics.yearly}
                         </div>
                       </div>
                     </div>

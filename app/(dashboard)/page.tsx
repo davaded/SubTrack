@@ -7,12 +7,14 @@ import { Button } from '@/components/ui/button'
 import { SubscriptionCard } from '@/components/subscription/subscription-card'
 import { DollarSign, CreditCard, Plus, Bell } from 'lucide-react'
 import { useTranslation } from '@/hooks/use-translation'
+import { getCurrencySymbol } from '@/lib/currency'
 
 interface Stats {
   totalMonthly: number
   totalYearly: number
   activeCount: number
   cancelledCount: number
+  currency: string
 }
 
 interface Subscription {
@@ -102,10 +104,10 @@ export default function Dashboard() {
           </CardHeader>
           <CardContent>
             <div className="text-3xl font-bold text-headline">
-              ¥{stats?.totalMonthly.toFixed(2) || '0.00'}
+              {stats ? getCurrencySymbol(stats.currency) : '¥'}{stats?.totalMonthly.toFixed(2) || '0.00'}
             </div>
             <p className="text-xs text-sub-headline mt-1">
-              ¥{stats?.totalYearly.toFixed(2) || '0.00'} {t.dashboard.perYear}
+              {stats ? getCurrencySymbol(stats.currency) : '¥'}{stats?.totalYearly.toFixed(2) || '0.00'} {t.dashboard.perYear}
             </p>
           </CardContent>
         </Card>

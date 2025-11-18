@@ -2,6 +2,7 @@ import { NextRequest } from 'next/server'
 import { getCurrentUser } from '@/lib/auth'
 import { prisma } from '@/lib/prisma'
 import { successResponse, errorResponse, ErrorCodes } from '@/lib/api-response'
+import { calculateMonthlyCost } from '@/lib/currency'
 
 export async function GET(request: NextRequest) {
   const currentUser = await getCurrentUser()
@@ -10,6 +11,13 @@ export async function GET(request: NextRequest) {
   }
 
   try {
+    // 获取用户信息以获取默认货币
+    const user = await prisma.user.findUnique({
+      where: { id: currentUser.userId },
+    })
+
+    const defaultCurrency = user?.defaultCurrency || 'CNY'
+
     const subscriptions = await prisma.subscription.findMany({
       where: {
         userId: currentUser.userId,
@@ -22,32 +30,17 @@ export async function GET(request: NextRequest) {
     let cancelledCount = 0
 
     subscriptions.forEach((sub) => {
-      const amount = Number(sub.amount)
-
       if (sub.isActive) {
         activeCount++
 
-        // Calculate monthly amount based on billing cycle
-        let monthlyAmount = 0
-        switch (sub.billingCycle) {
-          case 'monthly':
-            monthlyAmount = amount
-            break
-          case 'quarterly':
-            monthlyAmount = amount / 3
-            break
-          case 'semi-annually':
-            monthlyAmount = amount / 6
-            break
-          case 'annually':
-            monthlyAmount = amount / 12
-            break
-          case 'custom':
-            if (sub.customCycleDays) {
-              monthlyAmount = (amount / sub.customCycleDays) * 30
-            }
-            break
-        }
+        // 使用货币转换工具计算月度成本（转换为用户的默认货币）
+        const monthlyAmount = calculateMonthlyCost(
+          Number(sub.amount),
+          sub.currency,
+          sub.billingCycle,
+          sub.customCycleDays,
+          defaultCurrency
+        )
 
         totalMonthly += monthlyAmount
 
@@ -67,6 +60,7 @@ export async function GET(request: NextRequest) {
       totalYearly: Number(totalYearly.toFixed(2)),
       activeCount,
       cancelledCount,
+      currency: defaultCurrency, // 返回用户的默认货币
       byCategory: Object.fromEntries(
         Object.entries(byCategory).map(([key, value]) => [
           key,
