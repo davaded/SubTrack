@@ -1,104 +1,272 @@
 # SubTrack - Subscription Management System
 
+[简体中文](./README.zh-CN.md) | English
+
 A modern web application to help you manage and track all your subscription services in one place.
 
-## Features
+## ✨ Features
 
 ### Core Features
-- **User Authentication**: Secure registration and login with JWT-based authentication
-- **Subscription Management**: Add, edit, and delete subscriptions with detailed information
-- **Billing Tracking**: Automatic calculation of next billing dates based on various cycles
-- **Renewal Reminders**: Get notified about upcoming subscription renewals
-- **Statistics Dashboard**: View monthly/yearly spending and subscription analytics
-- **Category Organization**: Organize subscriptions by categories (Entertainment, Productivity, etc.)
-- **Multi-Currency Support**: Track subscriptions in CNY, USD, EUR, or GBP
+- 📊 **Subscription Management**: Add, edit, and delete subscriptions with detailed information
+- 💰 **Cost Tracking**: Automatic calculation of monthly/yearly spending
+- 🔔 **Smart Reminders**: Multi-channel renewal reminders (Email/DingTalk/Feishu)
+- 📈 **Statistics**: Spending trends and category analytics
+- 🌍 **Multi-language**: Support Chinese and English
+- 🎨 **Icon Support**: Automatically fetch subscription service icons
 
-### User Interface
-- Clean and modern design with custom color scheme
-- Responsive layout for desktop, tablet, and mobile devices
-- Intuitive navigation with sidebar menu
-- Real-time search and filtering
-- Visual subscription cards with status indicators
+### Reminder System
+- ✅ Email notifications (Resend)
+- ✅ DingTalk group bot
+- ✅ Feishu/Lark group bot
+- ✅ Can be used in combination
+- ✅ Group by urgency
+- ✅ Custom remind days before
 
-## Tech Stack
+### Subscription Features
+- 🔄 Multiple billing cycles (Monthly/Quarterly/Semi-annually/Annually/Custom)
+- 💱 Multi-currency support (CNY/USD/EUR/GBP)
+- 🏷️ Category management
+- 🔗 Website links
+- 📝 Notes
+- ✅/❌ Active/Cancelled status
 
-### Frontend
-- **Framework**: Next.js 14+ (App Router)
-- **Language**: TypeScript
-- **Styling**: TailwindCSS
-- **UI Components**: Custom components based on shadcn/ui
-- **State Management**: Zustand
-- **Icons**: Lucide React
-- **Date Handling**: Day.js
+---
 
-### Backend
-- **Runtime**: Node.js 18+
-- **API**: Next.js API Routes
-- **Database**: PostgreSQL 14+
-- **ORM**: Prisma
-- **Authentication**: JWT + bcrypt
-- **Validation**: Zod
-
-## Getting Started
+## 🚀 Getting Started
 
 ### Prerequisites
-- Node.js 18 or higher
-- PostgreSQL 14 or higher
-- npm or yarn package manager
+- Node.js 18+
+- PostgreSQL 14+
+- npm or pnpm
 
 ### Installation
 
 1. **Clone the repository**
-   ```bash
-   git clone <repository-url>
-   cd SubTrack
-   ```
+```bash
+git clone https://github.com/yourusername/SubTrack.git
+cd SubTrack
+```
 
 2. **Install dependencies**
-   ```bash
-   npm install
-   ```
+```bash
+npm install
+```
 
-3. **Set up environment variables**
+3. **Configure environment variables**
+```bash
+cp .env.example .env
+```
 
-   Create a `.env` file in the root directory:
-   ```env
-   # Database
-   DATABASE_URL="postgresql://user:password@localhost:5432/subscriptions"
+Edit `.env` file:
+```bash
+# Database
+DATABASE_URL="postgresql://user:password@localhost:5432/subscriptions"
 
-   # JWT Secret (generate a random secure string)
-   JWT_SECRET="your-super-secret-jwt-key-change-this-in-production"
+# JWT Secret
+JWT_SECRET="your-super-secret-jwt-key"
 
-   # App URL
-   NEXT_PUBLIC_APP_URL="http://localhost:3000"
+# App URL
+NEXT_PUBLIC_APP_URL="http://localhost:3000"
 
-   # Node Environment
-   NODE_ENV="development"
-   ```
+# Email Reminder (Optional)
+RESEND_API_KEY="re_xxxxxxxxxxxx"
+EMAIL_FROM="SubTrack <noreply@yourdomain.com>"
 
-4. **Set up the database**
+# DingTalk Notification (Optional)
+DINGTALK_WEBHOOK="https://oapi.dingtalk.com/robot/send?access_token=xxx"
+DINGTALK_SECRET="SECxxxxxxxxx"
 
-   Make sure PostgreSQL is running, then create the database:
-   ```bash
-   createdb subscriptions
-   ```
+# Feishu Notification (Optional)
+FEISHU_WEBHOOK="https://open.feishu.cn/open-apis/bot/v2/hook/xxx"
+FEISHU_SECRET="xxxxxxxxx"
 
-   Run Prisma migrations:
-   ```bash
-   npx prisma migrate dev
-   ```
+# Webhook Secret
+WEBHOOK_SECRET="random-string-here"
+```
 
-   Generate Prisma Client:
-   ```bash
-   npx prisma generate
-   ```
+4. **Initialize database**
+```bash
+npx prisma migrate dev
+```
 
-5. **Start the development server**
-   ```bash
-   npm run dev
-   ```
+5. **Start development server**
+```bash
+npm run dev
+```
 
-   Open [http://localhost:3000](http://localhost:3000) in your browser.
+6. **Open application**
+```
+http://localhost:3000
+```
+
+---
+
+## 📖 Documentation
+
+### Reminder Configuration
+- [Email Reminder Setup Guide](./REMINDER_SETUP_EN.md)
+- [DingTalk/Feishu Notification Setup Guide](./NOTIFICATION_SETUP_EN.md)
+
+### Chinese Documentation
+- [邮件提醒配置指南](./REMINDER_SETUP.md)
+- [钉钉/飞书通知配置指南](./NOTIFICATION_SETUP.md)
+
+---
+
+## 🛠️ Tech Stack
+
+### Frontend
+- **Framework**: Next.js 14 (App Router)
+- **Language**: TypeScript
+- **Styling**: TailwindCSS
+- **State Management**: Zustand
+- **Date Handling**: Day.js
+- **Charts**: Recharts
+- **Form Validation**: Zod
+
+### Backend
+- **Runtime**: Node.js
+- **Framework**: Next.js API Routes
+- **Database**: PostgreSQL
+- **ORM**: Prisma
+- **Authentication**: JWT + bcrypt
+
+### Notification Services
+- **Email**: Resend
+- **Instant Messaging**: DingTalk/Feishu Webhook
+- **Cron Jobs**: cron-job.org
+
+---
+
+## 📁 Project Structure
+
+```
+SubTrack/
+├── app/                      # Next.js App Router
+│   ├── (auth)/              # Auth pages
+│   ├── (dashboard)/         # Dashboard pages
+│   └── api/                 # API routes
+├── components/              # React components
+│   ├── layout/              # Layout components
+│   ├── subscription/        # Subscription components
+│   └── ui/                  # Base UI components
+├── lib/                     # Utilities
+│   ├── auth/                # Auth utilities
+│   ├── email/               # Email services
+│   ├── notification/        # Notification services
+│   ├── i18n/                # Internationalization
+│   └── store/               # State management
+├── prisma/                  # Database config
+│   └── schema.prisma        # Data models
+└── public/                  # Static assets
+```
+
+---
+
+## 🔔 Notification Channels
+
+### Email Notification
+- Beautiful HTML template
+- Grouped by urgency
+- Clickable links
+
+### DingTalk Notification
+- Markdown format
+- Support @mentions
+- Group sharing
+
+### Feishu Notification
+- Interactive card
+- With buttons
+- Better visual design
+
+**All channels can be used individually or in combination!**
+
+---
+
+## 🌍 Internationalization
+
+Supported languages:
+- 🇨🇳 Simplified Chinese
+- 🇺🇸 English
+
+How to switch:
+- Language toggle button in top navigation
+- Auto-save user preference
+
+---
+
+## 🚀 Deployment
+
+### Vercel (Recommended)
+
+1. Fork this project
+2. Import to Vercel
+3. Configure environment variables
+4. Deploy
+
+### Self-Hosted
+
+1. Build project
+```bash
+npm run build
+```
+
+2. Start production server
+```bash
+npm start
+```
+
+3. Use PM2 for process management
+```bash
+pm2 start npm --name "subtrack" -- start
+```
+
+---
+
+## 🤝 Contributing
+
+Contributions are welcome! Please follow these steps:
+
+1. Fork this project
+2. Create feature branch (`git checkout -b feature/AmazingFeature`)
+3. Commit changes (`git commit -m 'Add some AmazingFeature'`)
+4. Push to branch (`git push origin feature/AmazingFeature`)
+5. Open Pull Request
+
+---
+
+## 📝 License
+
+This project is licensed under the MIT License - see [LICENSE](LICENSE) file for details
+
+---
+
+## 💬 Contact
+
+- Bug Reports: [GitHub Issues](https://github.com/yourusername/SubTrack/issues)
+- Feature Requests: [GitHub Discussions](https://github.com/yourusername/SubTrack/discussions)
+
+---
+
+## 🙏 Acknowledgments
+
+- [Next.js](https://nextjs.org/) - React Framework
+- [Prisma](https://www.prisma.io/) - ORM
+- [Resend](https://resend.com/) - Email Service
+- [TailwindCSS](https://tailwindcss.com/) - CSS Framework
+- [Zustand](https://github.com/pmndrs/zustand) - State Management
+
+---
+
+## ⭐ Star History
+
+If this project helps you, please give it a Star ⭐
+
+---
+
+**Made with ❤️ by SubTrack Team**
+
 
 ## Usage
 
