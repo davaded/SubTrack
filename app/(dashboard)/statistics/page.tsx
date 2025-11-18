@@ -15,6 +15,8 @@ import {
   XAxis,
   YAxis,
   CartesianGrid,
+  LineChart,
+  Line,
 } from 'recharts'
 import { useTranslation } from '@/hooks/use-translation'
 import { getCurrencySymbol } from '@/lib/currency'
@@ -26,6 +28,16 @@ interface Stats {
   cancelledCount: number
   currency: string
   byCategory: Record<string, number>
+}
+
+interface TrendData {
+  currency: string
+  months: Array<{
+    month: string
+    label: string
+    total: number
+    newSubscriptions: number
+  }>
 }
 
 const COLORS = {
@@ -41,6 +53,7 @@ const COLORS = {
 export default function StatisticsPage() {
   const t = useTranslation()
   const [stats, setStats] = useState<Stats | null>(null)
+  const [trends, setTrends] = useState<TrendData | null>(null)
   const [isLoading, setIsLoading] = useState(true)
 
   // 动态分类标签
@@ -58,21 +71,30 @@ export default function StatisticsPage() {
   }
 
   useEffect(() => {
-    async function fetchStats() {
+    async function fetchData() {
       try {
-        const response = await fetch('/api/subscriptions/stats')
-        if (response.ok) {
-          const data = await response.json()
+        const [statsRes, trendsRes] = await Promise.all([
+          fetch('/api/subscriptions/stats'),
+          fetch('/api/subscriptions/trends'),
+        ])
+
+        if (statsRes.ok) {
+          const data = await statsRes.json()
           setStats(data.data)
         }
+
+        if (trendsRes.ok) {
+          const data = await trendsRes.json()
+          setTrends(data.data)
+        }
       } catch (error) {
-        console.error('获取统计数据失败:', error)
+        console.error('获取数据失败:', error)
       } finally {
         setIsLoading(false)
       }
     }
 
-    fetchStats()
+    fetchData()
   }, [])
 
   if (isLoading) {
@@ -175,6 +197,44 @@ export default function StatisticsPage() {
           </CardContent>
         </Card>
       </div>
+
+      {/* 月度支出趋势 */}
+      {trends && trends.months.length > 0 && (
+        <Card>
+          <CardHeader>
+            <CardTitle>{t.analytics.trend}</CardTitle>
+          </CardHeader>
+          <CardContent>
+            <ResponsiveContainer width="100%" height={300}>
+              <LineChart data={trends.months}>
+                <CartesianGrid strokeDasharray="3 3" />
+                <XAxis
+                  dataKey="label"
+                  tick={{ fontSize: 12 }}
+                  angle={-45}
+                  textAnchor="end"
+                  height={80}
+                />
+                <YAxis />
+                <Tooltip
+                  formatter={(value: number) => `${getCurrencySymbol(stats?.currency || 'CNY')}${value.toFixed(2)}`}
+                  labelFormatter={(label: string) => label}
+                />
+                <Legend />
+                <Line
+                  type="monotone"
+                  dataKey="total"
+                  stroke="#ff8ba7"
+                  strokeWidth={2}
+                  name={t.analytics.monthlyTotal}
+                  dot={{ fill: '#ff8ba7', r: 4 }}
+                  activeDot={{ r: 6 }}
+                />
+              </LineChart>
+            </ResponsiveContainer>
+          </CardContent>
+        </Card>
+      )}
 
       {/* 图表区域 */}
       {categoryData.length > 0 ? (
