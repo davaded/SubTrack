@@ -6,6 +6,7 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
 import { SubscriptionCard } from '@/components/subscription/subscription-card'
 import { DollarSign, CreditCard, Plus, Bell } from 'lucide-react'
+import { useTranslation } from '@/hooks/use-translation'
 
 interface Stats {
   totalMonthly: number
@@ -28,6 +29,7 @@ interface Subscription {
 }
 
 export default function Dashboard() {
+  const t = useTranslation()
   const [stats, setStats] = useState<Stats | null>(null)
   const [upcoming, setUpcoming] = useState<Subscription[]>([])
   const [isLoading, setIsLoading] = useState(true)
@@ -76,15 +78,15 @@ export default function Dashboard() {
     <div className="space-y-8">
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-3xl font-bold text-headline">Dashboard</h1>
+          <h1 className="text-3xl font-bold text-headline">{t.dashboard.title}</h1>
           <p className="text-sub-headline mt-1">
-            Overview of your subscription expenses
+            {t.dashboard.overviewDescription}
           </p>
         </div>
         <Link href="/subscriptions/new">
           <Button className="gap-2">
             <Plus className="h-4 w-4" />
-            Add Subscription
+            {t.subscription.addNew}
           </Button>
         </Link>
       </div>
@@ -94,7 +96,7 @@ export default function Dashboard() {
         <Card>
           <CardHeader className="flex flex-row items-center justify-between pb-2">
             <CardTitle className="text-sm font-medium text-sub-headline">
-              Monthly Cost
+              {t.dashboard.monthlyCost}
             </CardTitle>
             <DollarSign className="h-4 w-4 text-highlight" />
           </CardHeader>
@@ -103,7 +105,7 @@ export default function Dashboard() {
               ¥{stats?.totalMonthly.toFixed(2) || '0.00'}
             </div>
             <p className="text-xs text-sub-headline mt-1">
-              ¥{stats?.totalYearly.toFixed(2) || '0.00'} per year
+              ¥{stats?.totalYearly.toFixed(2) || '0.00'} {t.dashboard.perYear}
             </p>
           </CardContent>
         </Card>
@@ -111,7 +113,7 @@ export default function Dashboard() {
         <Card>
           <CardHeader className="flex flex-row items-center justify-between pb-2">
             <CardTitle className="text-sm font-medium text-sub-headline">
-              Active Subscriptions
+              {t.subscription.activeSubscriptions}
             </CardTitle>
             <CreditCard className="h-4 w-4 text-highlight" />
           </CardHeader>
@@ -120,7 +122,7 @@ export default function Dashboard() {
               {stats?.activeCount || 0}
             </div>
             <p className="text-xs text-sub-headline mt-1">
-              {stats?.cancelledCount || 0} cancelled
+              {stats?.cancelledCount || 0} {t.common.cancelled}
             </p>
           </CardContent>
         </Card>
@@ -128,7 +130,7 @@ export default function Dashboard() {
         <Card>
           <CardHeader className="flex flex-row items-center justify-between pb-2">
             <CardTitle className="text-sm font-medium text-sub-headline">
-              Upcoming Renewals
+              {t.dashboard.upcomingRenewals}
             </CardTitle>
             <Bell className="h-4 w-4 text-highlight" />
           </CardHeader>
@@ -137,7 +139,7 @@ export default function Dashboard() {
               {upcoming.filter((s) => s.shouldRemind).length}
             </div>
             <p className="text-xs text-sub-headline mt-1">
-              In the next 30 days
+              {t.dashboard.inNext30Days}
             </p>
           </CardContent>
         </Card>
@@ -147,11 +149,11 @@ export default function Dashboard() {
       <div>
         <div className="flex items-center justify-between mb-4">
           <h2 className="text-2xl font-semibold text-headline">
-            Upcoming Renewals
+            {t.dashboard.upcomingRenewals}
           </h2>
           <Link href="/subscriptions">
             <Button variant="outline" size="sm">
-              View All
+              {t.dashboard.viewAll}
             </Button>
           </Link>
         </div>
@@ -159,7 +161,7 @@ export default function Dashboard() {
           <Card>
             <CardContent className="py-12 text-center">
               <Bell className="h-12 w-12 text-sub-headline/30 mx-auto mb-4" />
-              <p className="text-sub-headline">No upcoming renewals in the next 30 days</p>
+              <p className="text-sub-headline">{t.dashboard.noUpcomingRenewals30Days}</p>
             </CardContent>
           </Card>
         ) : (
