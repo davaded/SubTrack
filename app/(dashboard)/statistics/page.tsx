@@ -40,6 +40,17 @@ interface TrendData {
   }>
 }
 
+interface UpcomingSubscription {
+  id: number
+  name: string
+  amount: number
+  currency: string
+  nextBillingDate: string
+  daysUntilRenewal: number
+  category: string | null
+  logoUrl: string | null
+}
+
 const COLORS = {
   entertainment: '#ff8ba7',
   productivity: '#ffc6c7',
@@ -54,6 +65,7 @@ export default function StatisticsPage() {
   const t = useTranslation()
   const [stats, setStats] = useState<Stats | null>(null)
   const [trends, setTrends] = useState<TrendData | null>(null)
+  const [upcoming, setUpcoming] = useState<UpcomingSubscription[]>([])
   const [isLoading, setIsLoading] = useState(true)
 
   // 动态分类标签
@@ -73,9 +85,10 @@ export default function StatisticsPage() {
   useEffect(() => {
     async function fetchData() {
       try {
-        const [statsRes, trendsRes] = await Promise.all([
+        const [statsRes, trendsRes, upcomingRes] = await Promise.all([
           fetch('/api/subscriptions/stats'),
           fetch('/api/subscriptions/trends'),
+          fetch('/api/subscriptions/upcoming-this-month'),
         ])
 
         if (statsRes.ok) {
@@ -86,6 +99,11 @@ export default function StatisticsPage() {
         if (trendsRes.ok) {
           const data = await trendsRes.json()
           setTrends(data.data)
+        }
+
+        if (upcomingRes.ok) {
+          const data = await upcomingRes.json()
+          setUpcoming(data.data)
         }
       } catch (error) {
         console.error('获取数据失败:', error)
@@ -232,6 +250,80 @@ export default function StatisticsPage() {
                 />
               </LineChart>
             </ResponsiveContainer>
+          </CardContent>
+        </Card>
+      )}
+
+      {/* 本月即将续费时间线 */}
+      {upcoming.length > 0 && (
+        <Card>
+          <CardHeader>
+            <CardTitle>{t.analytics.upcomingRenewals}</CardTitle>
+          </CardHeader>
+          <CardContent>
+            <div className="space-y-4">
+              {upcoming.map((sub) => {
+                const daysColor =
+                  sub.daysUntilRenewal <= 3
+                    ? 'text-red-500'
+                    : sub.daysUntilRenewal <= 7
+                    ? 'text-orange-500'
+                    : 'text-sub-headline'
+
+                return (
+                  <div
+                    key={sub.id}
+                    className="flex items-center justify-between p-4 rounded-lg border border-card-background hover:bg-card-background/50 transition-colors"
+                  >
+                    <div className="flex items-center gap-4 flex-1">
+                      {sub.logoUrl ? (
+                        <img
+                          src={sub.logoUrl}
+                          alt={sub.name}
+                          className="w-10 h-10 rounded-lg object-cover"
+                        />
+                      ) : (
+                        <div className="w-10 h-10 rounded-lg bg-card-background flex items-center justify-center">
+                          <span className="text-lg font-semibold text-headline">
+                            {sub.name.charAt(0)}
+                          </span>
+                        </div>
+                      )}
+                      <div className="flex-1">
+                        <div className="flex items-center gap-2">
+                          <h3 className="font-semibold text-headline">
+                            {sub.name}
+                          </h3>
+                          {sub.category && (
+                            <Badge variant="secondary" className="text-xs">
+                              {getCategoryLabel(sub.category)}
+                            </Badge>
+                          )}
+                        </div>
+                        <p className="text-sm text-sub-headline mt-1">
+                          {new Date(sub.nextBillingDate).toLocaleDateString('zh-CN', {
+                            month: 'long',
+                            day: 'numeric',
+                          })}
+                        </p>
+                      </div>
+                    </div>
+                    <div className="text-right">
+                      <div className="font-semibold text-headline text-lg">
+                        {getCurrencySymbol(sub.currency)}{sub.amount.toFixed(2)}
+                      </div>
+                      <div className={`text-sm font-medium ${daysColor}`}>
+                        {sub.daysUntilRenewal === 0
+                          ? t.analytics.renewToday
+                          : sub.daysUntilRenewal === 1
+                          ? t.analytics.renewTomorrow
+                          : `${sub.daysUntilRenewal} ${t.analytics.daysLeft}`}
+                      </div>
+                    </div>
+                  </div>
+                )
+              })}
+            </div>
           </CardContent>
         </Card>
       )}

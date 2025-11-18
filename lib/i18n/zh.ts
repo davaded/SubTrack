@@ -210,6 +210,10 @@ export const zh = {
     noCategoryData: '暂无分类数据',
     categoryDetails: '分类详情',
     loadFailed: '加载统计数据失败',
+    upcomingRenewals: '本月即将续费',
+    renewToday: '今天续费',
+    renewTomorrow: '明天续费',
+    daysLeft: '天后',
   },
 
   // 设置

@@ -212,6 +212,10 @@ export const en: Translation = {
     noCategoryData: 'No category data available',
     categoryDetails: 'Category Details',
     loadFailed: 'Failed to load statistics',
+    upcomingRenewals: 'Upcoming Renewals This Month',
+    renewToday: 'Renewing today',
+    renewTomorrow: 'Renewing tomorrow',
+    daysLeft: 'days left',
   },
 
   // Settings
