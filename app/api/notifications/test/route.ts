@@ -19,7 +19,7 @@ export async function POST(request: NextRequest) {
     switch (channel) {
       case 'email': {
         // 检查是否配置了邮件
-        if (!process.env.RESEND_API_KEY) {
+        if (!resend || !process.env.RESEND_API_KEY) {
           return NextResponse.json(
             { error: '邮件服务未配置', configured: false },
             { status: 400 }

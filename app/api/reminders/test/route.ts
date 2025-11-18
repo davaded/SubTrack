@@ -89,6 +89,17 @@ export async function POST(request: NextRequest) {
       grouped.upcoming = subscriptionsWithDays
     }
 
+    // 检查邮件服务是否配置
+    if (!resend || !process.env.RESEND_API_KEY) {
+      return NextResponse.json(
+        {
+          success: false,
+          error: 'Email service is not configured. Please set RESEND_API_KEY in environment variables.',
+        },
+        { status: 400 }
+      )
+    }
+
     // 生成邮件内容
     const { subject, html } = generateReminderEmail({
       userName: user.name || user.email.split('@')[0],

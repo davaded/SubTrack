@@ -106,7 +106,7 @@ export async function POST(request: NextRequest) {
         const locale = 'zh' // TODO: 可以从用户设置中获取语言偏好
 
         // 1. 发送邮件（如果配置了 Resend）
-        if (process.env.RESEND_API_KEY) {
+        if (resend && process.env.RESEND_API_KEY) {
           try {
             const { subject, html } = generateReminderEmail({
               userName,
