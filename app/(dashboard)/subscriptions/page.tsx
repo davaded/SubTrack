@@ -7,6 +7,7 @@ import { Input } from '@/components/ui/input'
 import { Select } from '@/components/ui/select'
 import { SubscriptionCard } from '@/components/subscription/subscription-card'
 import { Plus, Search } from 'lucide-react'
+import { useTranslation } from '@/hooks/use-translation'
 
 interface Subscription {
   id: number
@@ -21,6 +22,7 @@ interface Subscription {
 }
 
 export default function SubscriptionsPage() {
+  const t = useTranslation()
   const [subscriptions, setSubscriptions] = useState<Subscription[]>([])
   const [filteredSubscriptions, setFilteredSubscriptions] = useState<
     Subscription[]
@@ -80,15 +82,15 @@ export default function SubscriptionsPage() {
     <div className="space-y-6">
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-3xl font-bold text-headline">Subscriptions</h1>
+          <h1 className="text-3xl font-bold text-headline">{t.subscription.title}</h1>
           <p className="text-sub-headline mt-1">
-            Manage all your subscriptions in one place
+            {t.subscription.manageDescription}
           </p>
         </div>
         <Link href="/subscriptions/new">
           <Button className="gap-2">
             <Plus className="h-4 w-4" />
-            Add Subscription
+            {t.subscription.addNew}
           </Button>
         </Link>
       </div>
@@ -98,7 +100,7 @@ export default function SubscriptionsPage() {
         <div className="relative flex-1">
           <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-sub-headline" />
           <Input
-            placeholder="Search subscriptions..."
+            placeholder={t.subscription.searchPlaceholder}
             value={search}
             onChange={(e) => setSearch(e.target.value)}
             className="pl-10"
@@ -109,14 +111,14 @@ export default function SubscriptionsPage() {
           onChange={(e) => setCategoryFilter(e.target.value)}
           className="w-48"
         >
-          <option value="">All Categories</option>
-          <option value="entertainment">Entertainment</option>
-          <option value="productivity">Productivity</option>
-          <option value="education">Education</option>
-          <option value="fitness">Fitness</option>
-          <option value="music">Music</option>
-          <option value="cloud">Cloud</option>
-          <option value="other">Other</option>
+          <option value="">{t.subscription.allCategories}</option>
+          <option value="entertainment">{t.subscription.categories.entertainment}</option>
+          <option value="productivity">{t.subscription.categories.productivity}</option>
+          <option value="education">{t.subscription.categories.education}</option>
+          <option value="fitness">{t.subscription.categories.fitness}</option>
+          <option value="music">{t.subscription.categories.music}</option>
+          <option value="cloud">{t.subscription.categories.cloud}</option>
+          <option value="other">{t.subscription.categories.other}</option>
         </Select>
       </div>
 
@@ -125,12 +127,12 @@ export default function SubscriptionsPage() {
         <div className="text-center py-12">
           <p className="text-sub-headline mb-4">
             {search || categoryFilter
-              ? 'No subscriptions found matching your criteria'
-              : 'No subscriptions yet'}
+              ? t.subscription.noMatchingSubscriptions
+              : t.subscription.noSubscriptions}
           </p>
           {!search && !categoryFilter && (
             <Link href="/subscriptions/new">
-              <Button>Add Your First Subscription</Button>
+              <Button>{t.subscription.addFirstSubscription}</Button>
             </Link>
           )}
         </div>
