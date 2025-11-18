@@ -36,7 +36,7 @@ export default function EditSubscriptionPage({
   params: { id: string }
 }) {
   const router = useRouter()
-  const t = useTranslation()
+  const { t } = useTranslation()
   const [isLoading, setIsLoading] = useState(true)
   const [isSaving, setIsSaving] = useState(false)
   const [error, setError] = useState('')

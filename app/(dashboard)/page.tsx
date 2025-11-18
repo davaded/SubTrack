@@ -31,7 +31,7 @@ interface Subscription {
 }
 
 export default function Dashboard() {
-  const t = useTranslation()
+  const { t } = useTranslation()
   const [stats, setStats] = useState<Stats | null>(null)
   const [upcoming, setUpcoming] = useState<Subscription[]>([])
   const [isLoading, setIsLoading] = useState(true)

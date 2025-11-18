@@ -24,7 +24,7 @@ interface SubscriptionCardProps {
 }
 
 export function SubscriptionCard({ subscription }: SubscriptionCardProps) {
-  const t = useTranslation()
+  const { t } = useTranslation()
   const daysUntil = subscription.daysUntilRenewal ?? 0
   const isUpcoming = daysUntil <= 7 && daysUntil >= 0
 

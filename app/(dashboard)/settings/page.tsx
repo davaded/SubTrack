@@ -12,7 +12,7 @@ import { Bell, Mail, Loader2, CheckCircle2, XCircle } from 'lucide-react'
 import { useTranslation } from '@/lib/hooks/use-translation'
 
 export default function SettingsPage() {
-  const t = useTranslation()
+  const { t } = useTranslation()
   const router = useRouter()
   const { user, setUser } = useAuthStore()
   const [isLoading, setIsLoading] = useState(false)

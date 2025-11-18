@@ -39,7 +39,7 @@ export default function SubscriptionDetailPage({
 }: {
   params: { id: string }
 }) {
-  const t = useTranslation()
+  const { t } = useTranslation()
   const router = useRouter()
   const [subscription, setSubscription] = useState<Subscription | null>(null)
   const [isLoading, setIsLoading] = useState(true)

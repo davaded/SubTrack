@@ -8,7 +8,7 @@ import { useTranslation } from '@/lib/hooks/use-translation'
 
 export function Sidebar() {
   const pathname = usePathname()
-  const t = useTranslation()
+  const { t } = useTranslation()
 
   const navItems = [
     { href: '/', label: t.nav.dashboard, icon: Home },

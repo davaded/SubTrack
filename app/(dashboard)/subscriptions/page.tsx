@@ -22,7 +22,7 @@ interface Subscription {
 }
 
 export default function SubscriptionsPage() {
-  const t = useTranslation()
+  const { t } = useTranslation()
   const [subscriptions, setSubscriptions] = useState<Subscription[]>([])
   const [filteredSubscriptions, setFilteredSubscriptions] = useState<
     Subscription[]

@@ -9,7 +9,7 @@ import { useTranslation } from '@/lib/hooks/use-translation'
 export function Header() {
   const router = useRouter()
   const { user, logout } = useAuthStore()
-  const t = useTranslation()
+  const { t } = useTranslation()
 
   const handleLogout = async () => {
     try {

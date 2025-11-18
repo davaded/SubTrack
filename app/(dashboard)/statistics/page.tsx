@@ -62,7 +62,7 @@ const COLORS = {
 }
 
 export default function StatisticsPage() {
-  const t = useTranslation()
+  const { t } = useTranslation()
   const [stats, setStats] = useState<Stats | null>(null)
   const [trends, setTrends] = useState<TrendData | null>(null)
   const [upcoming, setUpcoming] = useState<UpcomingSubscription[]>([])
