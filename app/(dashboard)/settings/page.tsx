@@ -8,6 +8,7 @@ import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import { Select } from '@/components/ui/select'
+import { Bell, Mail, Loader2, CheckCircle2, XCircle } from 'lucide-react'
 
 export default function SettingsPage() {
   const router = useRouter()
@@ -29,6 +30,20 @@ export default function SettingsPage() {
     confirmPassword: '',
   })
 
+  // 通知配置状态
+  const [notificationConfig, setNotificationConfig] = useState<{
+    email: { configured: boolean; from: string | null }
+    dingtalk: { configured: boolean; secured: boolean }
+    feishu: { configured: boolean; secured: boolean }
+    hasAnyConfig: boolean
+  } | null>(null)
+
+  // 测试通知状态
+  const [testingChannel, setTestingChannel] = useState<string | null>(null)
+  const [testResults, setTestResults] = useState<{
+    [key: string]: { success: boolean; message: string } | null
+  }>({})
+
   useEffect(() => {
     if (user) {
       setProfileData({
@@ -37,6 +52,67 @@ export default function SettingsPage() {
       })
     }
   }, [user])
+
+  // 获取通知配置状态
+  useEffect(() => {
+    async function fetchNotificationConfig() {
+      try {
+        const response = await fetch('/api/notifications/test')
+        if (response.ok) {
+          const config = await response.json()
+          setNotificationConfig(config)
+        }
+      } catch (error) {
+        console.error('获取通知配置失败:', error)
+      }
+    }
+    fetchNotificationConfig()
+  }, [])
+
+  // 测试通知函数
+  const testNotification = async (channel: 'email' | 'dingtalk' | 'feishu') => {
+    setTestingChannel(channel)
+    setTestResults({ ...testResults, [channel]: null })
+
+    try {
+      const response = await fetch('/api/notifications/test', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          channel,
+          userEmail: user?.email,
+        }),
+      })
+
+      const data = await response.json()
+
+      if (response.ok) {
+        setTestResults({
+          ...testResults,
+          [channel]: { success: true, message: data.message },
+        })
+        setMessage(data.message)
+      } else {
+        setTestResults({
+          ...testResults,
+          [channel]: { success: false, message: data.error },
+        })
+        setError(data.error)
+      }
+    } catch (err: any) {
+      setTestResults({
+        ...testResults,
+        [channel]: { success: false, message: '网络错误，请重试' },
+      })
+      setError('网络错误，请重试')
+    } finally {
+      setTestingChannel(null)
+      // 3秒后清除测试结果
+      setTimeout(() => {
+        setTestResults({ ...testResults, [channel]: null })
+      }, 3000)
+    }
+  }
 
   const handleProfileUpdate = async (e: React.FormEvent) => {
     e.preventDefault()
@@ -247,30 +323,225 @@ export default function SettingsPage() {
       {/* 通知设置 */}
       <Card>
         <CardHeader>
-          <CardTitle>通知设置</CardTitle>
-          <CardDescription>管理您的通知偏好</CardDescription>
+          <CardTitle className="flex items-center gap-2">
+            <Bell className="h-5 w-5" />
+            通知渠道测试
+          </CardTitle>
+          <CardDescription>
+            测试您配置的通知渠道是否正常工作
+          </CardDescription>
         </CardHeader>
         <CardContent>
-          <div className="space-y-4">
-            <div className="flex items-center justify-between">
-              <div>
-                <div className="font-medium text-headline">浏览器通知</div>
-                <div className="text-sm text-sub-headline">
-                  当订阅即将续费时通知您
+          {notificationConfig === null ? (
+            <div className="flex items-center justify-center py-8 text-sub-headline">
+              <Loader2 className="h-5 w-5 animate-spin mr-2" />
+              加载配置中...
+            </div>
+          ) : !notificationConfig.hasAnyConfig ? (
+            <div className="bg-yellow-50 border-2 border-yellow-200 rounded-lg p-4">
+              <div className="flex items-start gap-3">
+                <XCircle className="h-5 w-5 text-yellow-600 mt-0.5" />
+                <div>
+                  <div className="font-medium text-yellow-900">
+                    未配置任何通知渠道
+                  </div>
+                  <div className="text-sm text-yellow-700 mt-1">
+                    请在项目的 <code className="bg-yellow-100 px-1 rounded">.env</code> 文件中配置至少一个通知渠道：
+                  </div>
+                  <ul className="text-sm text-yellow-700 mt-2 space-y-1 ml-4 list-disc">
+                    <li>邮件通知：RESEND_API_KEY + EMAIL_FROM</li>
+                    <li>钉钉通知：DINGTALK_WEBHOOK + DINGTALK_SECRET</li>
+                    <li>飞书通知：FEISHU_WEBHOOK + FEISHU_SECRET</li>
+                  </ul>
+                  <div className="text-sm text-yellow-700 mt-2">
+                    配置后重启应用即可使用。详见：<code className="bg-yellow-100 px-1 rounded">NOTIFICATION_SETUP.md</code>
+                  </div>
                 </div>
               </div>
-              <div className="text-sm text-sub-headline">即将推出</div>
             </div>
-            <div className="flex items-center justify-between">
-              <div>
-                <div className="font-medium text-headline">邮件通知</div>
-                <div className="text-sm text-sub-headline">
-                  接收续费提醒邮件
+          ) : (
+            <div className="space-y-4">
+              {/* 邮件通知 */}
+              {notificationConfig.email.configured && (
+                <div className="border-2 border-stroke rounded-lg p-4">
+                  <div className="flex items-center justify-between">
+                    <div className="flex items-start gap-3 flex-1">
+                      <Mail className="h-5 w-5 text-blue-600 mt-0.5" />
+                      <div className="flex-1">
+                        <div className="font-medium text-headline">
+                          📧 邮件通知 (Resend)
+                        </div>
+                        <div className="text-sm text-sub-headline mt-1">
+                          发件人：{notificationConfig.email.from || '未设置'}
+                        </div>
+                        <div className="text-sm text-sub-headline">
+                          接收邮箱：{user?.email}
+                        </div>
+                        {testResults.email && (
+                          <div
+                            className={`mt-2 text-sm flex items-center gap-1 ${
+                              testResults.email.success
+                                ? 'text-green-600'
+                                : 'text-red-600'
+                            }`}
+                          >
+                            {testResults.email.success ? (
+                              <CheckCircle2 className="h-4 w-4" />
+                            ) : (
+                              <XCircle className="h-4 w-4" />
+                            )}
+                            {testResults.email.message}
+                          </div>
+                        )}
+                      </div>
+                    </div>
+                    <Button
+                      onClick={() => testNotification('email')}
+                      disabled={testingChannel !== null}
+                      variant="outline"
+                      size="sm"
+                    >
+                      {testingChannel === 'email' ? (
+                        <>
+                          <Loader2 className="h-4 w-4 mr-1 animate-spin" />
+                          发送中...
+                        </>
+                      ) : (
+                        '发送测试'
+                      )}
+                    </Button>
+                  </div>
+                </div>
+              )}
+
+              {/* 钉钉通知 */}
+              {notificationConfig.dingtalk.configured && (
+                <div className="border-2 border-stroke rounded-lg p-4">
+                  <div className="flex items-center justify-between">
+                    <div className="flex items-start gap-3 flex-1">
+                      <Bell className="h-5 w-5 text-blue-500 mt-0.5" />
+                      <div className="flex-1">
+                        <div className="font-medium text-headline">
+                          📱 钉钉通知
+                        </div>
+                        <div className="text-sm text-sub-headline mt-1">
+                          Webhook：已配置
+                        </div>
+                        <div className="text-sm text-sub-headline">
+                          加签验证：
+                          {notificationConfig.dingtalk.secured ? (
+                            <span className="text-green-600">✓ 已启用</span>
+                          ) : (
+                            <span className="text-yellow-600">未启用</span>
+                          )}
+                        </div>
+                        {testResults.dingtalk && (
+                          <div
+                            className={`mt-2 text-sm flex items-center gap-1 ${
+                              testResults.dingtalk.success
+                                ? 'text-green-600'
+                                : 'text-red-600'
+                            }`}
+                          >
+                            {testResults.dingtalk.success ? (
+                              <CheckCircle2 className="h-4 w-4" />
+                            ) : (
+                              <XCircle className="h-4 w-4" />
+                            )}
+                            {testResults.dingtalk.message}
+                          </div>
+                        )}
+                      </div>
+                    </div>
+                    <Button
+                      onClick={() => testNotification('dingtalk')}
+                      disabled={testingChannel !== null}
+                      variant="outline"
+                      size="sm"
+                    >
+                      {testingChannel === 'dingtalk' ? (
+                        <>
+                          <Loader2 className="h-4 w-4 mr-1 animate-spin" />
+                          发送中...
+                        </>
+                      ) : (
+                        '发送测试'
+                      )}
+                    </Button>
+                  </div>
+                </div>
+              )}
+
+              {/* 飞书通知 */}
+              {notificationConfig.feishu.configured && (
+                <div className="border-2 border-stroke rounded-lg p-4">
+                  <div className="flex items-center justify-between">
+                    <div className="flex items-start gap-3 flex-1">
+                      <Bell className="h-5 w-5 text-green-500 mt-0.5" />
+                      <div className="flex-1">
+                        <div className="font-medium text-headline">
+                          📱 飞书通知
+                        </div>
+                        <div className="text-sm text-sub-headline mt-1">
+                          Webhook：已配置
+                        </div>
+                        <div className="text-sm text-sub-headline">
+                          签名验证：
+                          {notificationConfig.feishu.secured ? (
+                            <span className="text-green-600">✓ 已启用</span>
+                          ) : (
+                            <span className="text-yellow-600">未启用</span>
+                          )}
+                        </div>
+                        {testResults.feishu && (
+                          <div
+                            className={`mt-2 text-sm flex items-center gap-1 ${
+                              testResults.feishu.success
+                                ? 'text-green-600'
+                                : 'text-red-600'
+                            }`}
+                          >
+                            {testResults.feishu.success ? (
+                              <CheckCircle2 className="h-4 w-4" />
+                            ) : (
+                              <XCircle className="h-4 w-4" />
+                            )}
+                            {testResults.feishu.message}
+                          </div>
+                        )}
+                      </div>
+                    </div>
+                    <Button
+                      onClick={() => testNotification('feishu')}
+                      disabled={testingChannel !== null}
+                      variant="outline"
+                      size="sm"
+                    >
+                      {testingChannel === 'feishu' ? (
+                        <>
+                          <Loader2 className="h-4 w-4 mr-1 animate-spin" />
+                          发送中...
+                        </>
+                      ) : (
+                        '发送测试'
+                      )}
+                    </Button>
+                  </div>
+                </div>
+              )}
+
+              <div className="bg-blue-50 border-2 border-blue-200 rounded-lg p-3">
+                <div className="text-sm text-blue-900">
+                  <strong>💡 提示：</strong>点击"发送测试"按钮后：
+                  <ul className="mt-1 ml-4 list-disc space-y-0.5">
+                    <li>邮件通知：检查您的邮箱收件箱</li>
+                    <li>钉钉通知：检查您的钉钉群消息</li>
+                    <li>飞书通知：检查您的飞书群消息</li>
+                  </ul>
                 </div>
               </div>
-              <div className="text-sm text-sub-headline">即将推出</div>
             </div>
-          </div>
+          )}
         </CardContent>
       </Card>
 
