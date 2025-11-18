@@ -18,7 +18,7 @@ import {
   LineChart,
   Line,
 } from 'recharts'
-import { useTranslation } from '@/hooks/use-translation'
+import { useTranslation } from '@/lib/hooks/use-translation'
 import { getCurrencySymbol } from '@/lib/currency'
 
 interface Stats {
