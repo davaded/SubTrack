@@ -22,7 +22,7 @@ export default function SettingsPage() {
   // 个人信息表单
   const [profileData, setProfileData] = useState({
     name: '',
-    defaultCurrency: 'CNY',
+    defaultCurrency: 'USD',
   })
 
   // 密码修改表单

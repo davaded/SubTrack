@@ -5,7 +5,7 @@ import Link from 'next/link'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
 import { SubscriptionCard } from '@/components/subscription/subscription-card'
-import { DollarSign, CreditCard, Plus, Bell, Calendar } from 'lucide-react'
+import { DollarSign, CreditCard, Plus, Bell } from 'lucide-react'
 import { useTranslation } from '@/lib/hooks/use-translation'
 import { getCurrencySymbol } from '@/lib/currency'
 
@@ -15,14 +15,6 @@ interface Stats {
   activeCount: number
   cancelledCount: number
   currency: string
-}
-
-interface NextMonthForecast {
-  nextMonth: string
-  nextMonthLabel: string
-  currency: string
-  totalAmount: number
-  subscriptionCount: number
 }
 
 interface Subscription {
@@ -42,16 +34,14 @@ export default function Dashboard() {
   const { t } = useTranslation()
   const [stats, setStats] = useState<Stats | null>(null)
   const [upcoming, setUpcoming] = useState<Subscription[]>([])
-  const [nextMonthForecast, setNextMonthForecast] = useState<NextMonthForecast | null>(null)
   const [isLoading, setIsLoading] = useState(true)
 
   useEffect(() => {
     async function fetchData() {
       try {
-        const [statsRes, upcomingRes, forecastRes] = await Promise.all([
+        const [statsRes, upcomingRes] = await Promise.all([
           fetch('/api/subscriptions/stats'),
           fetch('/api/subscriptions/upcoming?days=30'),
-          fetch('/api/subscriptions/next-month-forecast'),
         ])
 
         if (statsRes.ok) {
@@ -67,11 +57,6 @@ export default function Dashboard() {
               nextBillingDate: new Date(sub.nextBillingDate),
             }))
           )
-        }
-
-        if (forecastRes.ok) {
-          const forecastData = await forecastRes.json()
-          setNextMonthForecast(forecastData.data)
         }
       } catch (error) {
         console.error('Failed to fetch data:', error)
@@ -109,7 +94,7 @@ export default function Dashboard() {
       </div>
 
       {/* Stats Cards */}
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
         <Card>
           <CardHeader className="flex flex-row items-center justify-between pb-2">
             <CardTitle className="text-sm font-medium text-sub-headline">
@@ -119,28 +104,10 @@ export default function Dashboard() {
           </CardHeader>
           <CardContent>
             <div className="text-3xl font-bold text-headline">
-              {stats ? getCurrencySymbol(stats.currency) : '¥'}{stats?.totalMonthly.toFixed(2) || '0.00'}
+              {stats ? getCurrencySymbol(stats.currency) : '$'}{stats?.totalMonthly.toFixed(2) || '0.00'}
             </div>
             <p className="text-xs text-sub-headline mt-1">
-              {stats ? getCurrencySymbol(stats.currency) : '¥'}{stats?.totalYearly.toFixed(2) || '0.00'} {t.dashboard.perYear}
-            </p>
-          </CardContent>
-        </Card>
-
-        <Card>
-          <CardHeader className="flex flex-row items-center justify-between pb-2">
-            <CardTitle className="text-sm font-medium text-sub-headline">
-              {t.dashboard.nextMonthForecast}
-            </CardTitle>
-            <Calendar className="h-4 w-4 text-highlight" />
-          </CardHeader>
-          <CardContent>
-            <div className="text-3xl font-bold text-headline">
-              {nextMonthForecast ? getCurrencySymbol(nextMonthForecast.currency) : '¥'}
-              {nextMonthForecast?.totalAmount.toFixed(2) || '0.00'}
-            </div>
-            <p className="text-xs text-sub-headline mt-1">
-              {nextMonthForecast?.subscriptionCount || 0} {t.dashboard.subscriptionsRenewing}
+              {stats ? getCurrencySymbol(stats.currency) : '$'}{stats?.totalYearly.toFixed(2) || '0.00'} {t.dashboard.perYear}
             </p>
           </CardContent>
         </Card>

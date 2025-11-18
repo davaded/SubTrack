@@ -3,13 +3,13 @@
  * 支持常见货币之间的转换
  */
 
-// 汇率配置（相对于 CNY）
+// 汇率配置（相对于 USD）
 // 注意：这些是示例汇率，实际使用时应该接入实时汇率 API
 const EXCHANGE_RATES: Record<string, number> = {
-  CNY: 1, // 人民币基准
-  USD: 0.14, // 1 CNY = 0.14 USD
-  EUR: 0.13, // 1 CNY = 0.13 EUR
-  GBP: 0.11, // 1 CNY = 0.11 GBP
+  USD: 1, // 美元基准
+  CNY: 7.2, // 1 USD = 7.2 CNY
+  EUR: 0.92, // 1 USD = 0.92 EUR
+  GBP: 0.79, // 1 USD = 0.79 GBP
 }
 
 /**
@@ -31,9 +31,9 @@ export function convertCurrency(
   const fromRate = EXCHANGE_RATES[fromCurrency] || 1
   const toRate = EXCHANGE_RATES[toCurrency] || 1
 
-  // 先转换为 CNY，再转换为目标货币
-  const amountInCNY = amount / fromRate
-  const convertedAmount = amountInCNY * toRate
+  // 先转换为 USD，再转换为目标货币
+  const amountInUSD = amount / fromRate
+  const convertedAmount = amountInUSD * toRate
 
   return convertedAmount
 }

@@ -16,7 +16,7 @@ export async function GET(request: NextRequest) {
       where: { id: currentUser.userId },
     })
 
-    const defaultCurrency = user?.defaultCurrency || 'CNY'
+    const defaultCurrency = user?.defaultCurrency || 'USD'
 
     const subscriptions = await prisma.subscription.findMany({
       where: {

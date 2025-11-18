@@ -15,7 +15,7 @@ model User {
   email            String         @unique
   password         String
   name             String?
-  defaultCurrency  String         @default("CNY") @map("default_currency")
+  defaultCurrency  String         @default("USD") @map("default_currency")
   createdAt        DateTime       @default(now()) @map("created_at")
   updatedAt        DateTime       @updatedAt @map("updated_at")
   subscriptions    Subscription[]
@@ -28,7 +28,7 @@ model Subscription {
   userId             Int      @map("user_id")
   name               String
   amount             Float
-  currency           String   @default("CNY")
+  currency           String   @default("USD")
   billingCycle       String   @map("billing_cycle")
   customCycleDays    Int?     @map("custom_cycle_days")
   firstBillingDate   DateTime @map("first_billing_date")

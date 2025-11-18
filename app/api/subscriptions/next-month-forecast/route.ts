@@ -22,7 +22,7 @@ export async function GET(request: NextRequest) {
       select: { defaultCurrency: true },
     })
 
-    const defaultCurrency = user?.defaultCurrency || 'CNY'
+    const defaultCurrency = user?.defaultCurrency || 'USD'
 
     // 获取所有活跃订阅
     const subscriptions = await prisma.subscription.findMany({
