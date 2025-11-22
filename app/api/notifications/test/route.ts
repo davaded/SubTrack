@@ -101,11 +101,8 @@ export async function POST(request: NextRequest) {
         }
 
         const message = {
-          msgtype: 'markdown' as const,
-          markdown: {
-            title: 'SubTrack 测试通知',
-            text: `### 🎉 测试通知成功！\n\n**✅ 钉钉通知配置正常**\n\n---\n\n**测试信息：**\n- ⏰ **测试时间：** ${now}\n- 📱 **通知渠道：** 钉钉群机器人\n- 🔐 **加签验证：** ${process.env.DINGTALK_SECRET ? '已启用' : '未启用'}\n\n---\n\n如果您看到这条消息，说明钉钉提醒功能已经配置成功！您将会在订阅即将到期时收到提醒。\n\n**测试订阅示例：**\n- 📺 **Netflix** - 还有 3 天到期 💰 ¥30.00/月\n- 🎵 **Spotify** - 还有 7 天到期 💰 ¥15.00/月\n- ☁️  **iCloud** - 还有 15 天到期 💰 ¥21.00/月`,
-          },
+          title: 'SubTrack 测试通知',
+          text: `### 🎉 测试通知成功！\n\n**✅ 钉钉通知配置正常**\n\n---\n\n**测试信息：**\n- ⏰ **测试时间：** ${now}\n- 📱 **通知渠道：** 钉钉群机器人\n- 🔐 **加签验证：** ${process.env.DINGTALK_SECRET ? '已启用' : '未启用'}\n\n---\n\n如果您看到这条消息，说明钉钉提醒功能已经配置成功！您将会在订阅即将到期时收到提醒。\n\n**测试订阅示例：**\n- 📺 **Netflix** - 还有 3 天到期 💰 ¥30.00/月\n- 🎵 **Spotify** - 还有 7 天到期 💰 ¥15.00/月\n- ☁️  **iCloud** - 还有 15 天到期 💰 ¥21.00/月`,
         }
 
         await sendDingTalkMessage(
