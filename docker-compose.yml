@@ -1,0 +1,39 @@
+version: '3.9'
+
+services:
+  web:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: subtrack-web
+    restart: always
+    ports:
+      - "3000:3000"
+    environment:
+      - DATABASE_URL=postgresql://postgres:postgres@db:5432/subtrack
+      - NEXTAUTH_SECRET=change_me_in_production
+      - NEXTAUTH_URL=http://localhost:3000
+    depends_on:
+      - db
+    networks:
+      - subtrack-network
+
+  db:
+    image: postgres:15-alpine
+    container_name: subtrack-db
+    restart: always
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+      POSTGRES_DB: subtrack
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    networks:
+      - subtrack-network
+
+networks:
+  subtrack-network:
+    driver: bridge
+
+volumes:
+  postgres_data:

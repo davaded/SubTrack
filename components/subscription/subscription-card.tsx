@@ -29,7 +29,7 @@ export function SubscriptionCard({ subscription }: SubscriptionCardProps) {
   const isUpcoming = daysUntil <= 7 && daysUntil >= 0
 
   return (
-    <Card className={isUpcoming ? 'border-highlight' : ''}>
+    <Card className={`transition-all duration-200 hover:-translate-y-1 hover:shadow-lg ${isUpcoming ? 'border-highlight shadow-md' : ''}`}>
       <CardHeader>
         <div className="flex items-start justify-between">
           <div className="flex items-start gap-3 flex-1">
@@ -48,9 +48,8 @@ export function SubscriptionCard({ subscription }: SubscriptionCardProps) {
             ) : null}
             {/* 首字母备用图标 */}
             <div
-              className={`w-12 h-12 rounded-lg bg-highlight flex items-center justify-center text-main font-bold text-xl ${
-                subscription.logoUrl ? 'hidden' : ''
-              }`}
+              className={`w-12 h-12 rounded-lg bg-highlight flex items-center justify-center text-main font-bold text-xl ${subscription.logoUrl ? 'hidden' : ''
+                }`}
             >
               {subscription.name.charAt(0).toUpperCase()}
             </div>
@@ -83,17 +82,16 @@ export function SubscriptionCard({ subscription }: SubscriptionCardProps) {
           </div>
           {daysUntil !== undefined && (
             <div
-              className={`text-sm font-medium ${
-                isUpcoming ? 'text-highlight' : 'text-sub-headline'
-              }`}
+              className={`text-sm font-medium ${isUpcoming ? 'text-highlight' : 'text-sub-headline'
+                }`}
             >
               {daysUntil === 0
                 ? t.subscription.renewingToday
                 : daysUntil === 1
-                ? t.subscription.renewingTomorrow
-                : daysUntil > 0
-                ? t.subscription.renewingInDays.replace('{days}', daysUntil.toString())
-                : t.subscription.overdueDays.replace('{days}', Math.abs(daysUntil).toString())}
+                  ? t.subscription.renewingTomorrow
+                  : daysUntil > 0
+                    ? t.subscription.renewingInDays.replace('{days}', daysUntil.toString())
+                    : t.subscription.overdueDays.replace('{days}', Math.abs(daysUntil).toString())}
             </div>
           )}
           <div className="flex gap-2 pt-2">
