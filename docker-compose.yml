@@ -11,8 +11,7 @@ services:
       - "3000:3000"
     environment:
       - DATABASE_URL=postgresql://postgres:postgres@db:5432/subtrack
-      - NEXTAUTH_SECRET=change_me_in_production
-      - NEXTAUTH_URL=http://localhost:3000
+      - JWT_SECRET=change_me_in_production
     depends_on:
       - db
     networks:
