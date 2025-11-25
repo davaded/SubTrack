@@ -42,6 +42,29 @@ export async function POST(request: NextRequest) {
       )
     }
 
+    // Check user status
+    if (user.status === 'pending') {
+      return errorResponse(
+        ErrorCodes.FORBIDDEN,
+        'Your account is pending approval. Please wait for administrator approval.',
+        403
+      )
+    }
+
+    if (user.status === 'suspended') {
+      return errorResponse(
+        ErrorCodes.FORBIDDEN,
+        'Your account has been suspended. Please contact the administrator.',
+        403
+      )
+    }
+
+    // Update last login time
+    await prisma.user.update({
+      where: { id: user.id },
+      data: { lastLoginAt: new Date() }
+    })
+
     // Generate token
     const token = generateToken({ userId: user.id, email: user.email })
 
@@ -53,6 +76,9 @@ export async function POST(request: NextRequest) {
         id: user.id,
         email: user.email,
         name: user.name,
+        role: user.role,
+        status: user.status,
+        mustChangePassword: user.mustChangePassword,
         defaultCurrency: user.defaultCurrency,
       },
       token,

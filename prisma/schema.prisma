@@ -15,11 +15,26 @@ model User {
   email            String         @unique
   password         String
   name             String?
+
+  // Role and Status
+  role             String         @default("user") // user | admin
+  status           String         @default("pending") // pending | active | suspended
+
+  // Approval tracking
+  approvedBy       Int?           @map("approved_by")
+  approvedAt       DateTime?      @map("approved_at")
+
+  // Security
+  mustChangePassword Boolean      @default(false) @map("must_change_password")
+  lastLoginAt      DateTime?      @map("last_login_at")
+
   defaultCurrency  String         @default("USD") @map("default_currency")
   createdAt        DateTime       @default(now()) @map("created_at")
   updatedAt        DateTime       @updatedAt @map("updated_at")
   subscriptions    Subscription[]
 
+  @@index([role])
+  @@index([status])
   @@map("users")
 }
 
@@ -48,4 +63,20 @@ model Subscription {
   @@index([nextBillingDate])
   @@index([isActive])
   @@map("subscriptions")
+}
+
+model SystemSettings {
+  id                 Int      @id @default(1)
+
+  // Registration settings
+  registrationMode   String   @default("approval") @map("registration_mode") // open | approval | closed
+
+  // Site settings
+  siteName           String   @default("SubTrack") @map("site_name")
+  maxUsersLimit      Int?     @map("max_users_limit")
+
+  createdAt          DateTime @default(now()) @map("created_at")
+  updatedAt          DateTime @updatedAt @map("updated_at")
+
+  @@map("system_settings")
 }
