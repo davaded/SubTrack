@@ -17,15 +17,20 @@ docker-compose up -d
 
 ## 推荐配置（生产环境）
 
-### 1. 创建 .env 文件（可选）
+### 1. 创建 .env 文件（强烈推荐）
 
-如果你想自定义配置，创建 `.env` 文件：
+⚠️ **生产环境必须修改以下密码！**
+
+创建 `.env` 文件：
 
 ```bash
-# JWT 密钥（强烈建议修改）
+# 数据库密码（生产环境必改！）
+POSTGRES_PASSWORD=your-strong-db-password-here
+
+# JWT 密钥（生产环境必改！）
 JWT_SECRET=your-super-secret-key-here
 
-# Webhook 密钥（用于定时任务）
+# Webhook 密钥（用于定时任务，推荐配置）
 WEBHOOK_SECRET=your-webhook-secret
 
 # 邮件通知（可选）
@@ -41,14 +46,27 @@ FEISHU_WEBHOOK=https://open.feishu.cn/open-apis/bot/v2/hook/xxx
 FEISHU_SECRET=xxxxxxxxxxxxxxx
 ```
 
-**生成安全密钥：**
+**快速生成安全密钥：**
 
 ```bash
+# 生成数据库密码
+openssl rand -base64 32
+
 # 生成 JWT_SECRET
 openssl rand -hex 32
 
 # 生成 WEBHOOK_SECRET
 openssl rand -hex 32
+```
+
+**或者使用脚本一键生成：**
+
+```bash
+cat > .env << EOF
+POSTGRES_PASSWORD=$(openssl rand -base64 32)
+JWT_SECRET=$(openssl rand -hex 32)
+WEBHOOK_SECRET=$(openssl rand -hex 32)
+EOF
 ```
 
 ### 2. 启动服务
@@ -143,14 +161,30 @@ docker exec subtrack-web npx prisma migrate deploy
 
 ## 配置说明
 
-### 不需要配置 DATABASE_URL
+### Docker 部署不需要配置 DATABASE_URL
 
-`DATABASE_URL` 已在 `docker-compose.yml` 中配置，用于容器间通信。
+`DATABASE_URL` 已在 `docker-compose.yml` 中自动配置，用于容器间通信。
 
-你只需要关注：
-- ✅ `JWT_SECRET` - 用户认证密钥（生产环境必改）
-- ⚠️ `WEBHOOK_SECRET` - 定时任务密钥（可选）
-- 📧 通知配置 - 根据需要配置
+### 必须修改（生产环境）
+
+- 🔒 `POSTGRES_PASSWORD` - 数据库密码（**必改**）
+- 🔑 `JWT_SECRET` - 用户认证密钥（**必改**）
+
+### 推荐配置
+
+- ⚠️ `WEBHOOK_SECRET` - 定时任务密钥（推荐）
+- 📧 通知配置 - 根据需要配置（可选）
+
+### 默认密码风险
+
+⚠️ 如果不创建 `.env` 文件，将使用以下默认值（**不安全**）：
+
+```
+POSTGRES_PASSWORD: postgres
+JWT_SECRET: change_me_in_production
+```
+
+**强烈建议生产环境创建 .env 文件并修改密码！**
 
 ### 端口配置
 
@@ -167,11 +201,29 @@ ports:
 
 ## 安全建议
 
-1. ⚠️ **生产环境必须修改 JWT_SECRET**
-2. 🔒 修改默认数据库密码（docker-compose.yml）
+### 🔴 必须做（生产环境）
+
+1. **创建 .env 文件并修改密码**
+   ```bash
+   # 一键生成安全密码
+   cat > .env << EOF
+   POSTGRES_PASSWORD=$(openssl rand -base64 32)
+   JWT_SECRET=$(openssl rand -hex 32)
+   WEBHOOK_SECRET=$(openssl rand -hex 32)
+   EOF
+   ```
+
+2. **妥善保管 .env 文件**
+   - 不要提交到 Git（已在 .gitignore 中）
+   - 设置文件权限：`chmod 600 .env`
+   - 定期更换密钥
+
+### 🟡 推荐做
+
 3. 🌐 使用 Nginx 反向代理 + HTTPS
 4. 🔥 配置防火墙规则
 5. 💾 定期备份数据库
+6. 📊 配置监控和日志
 
 ---
 

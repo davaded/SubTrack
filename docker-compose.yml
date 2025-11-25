@@ -11,7 +11,7 @@ services:
       - "3000:3000"
     environment:
       # 数据库连接（容器间通信）
-      - DATABASE_URL=postgresql://postgres:postgres@db:5432/subtrack
+      - DATABASE_URL=postgresql://postgres:${POSTGRES_PASSWORD:-postgres}@db:5432/subtrack
       # JWT密钥 - 生产环境请修改！生成命令: openssl rand -hex 32
       - JWT_SECRET=${JWT_SECRET:-change_me_in_production}
       # Webhook密钥（可选）
@@ -34,7 +34,8 @@ services:
     restart: always
     environment:
       POSTGRES_USER: postgres
-      POSTGRES_PASSWORD: postgres
+      # 数据库密码 - 生产环境请通过 .env 文件修改！
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-postgres}
       POSTGRES_DB: subtrack
     volumes:
       - postgres_data:/var/lib/postgresql/data
