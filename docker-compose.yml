@@ -1,4 +1,4 @@
-version: '3.9'
+version: '3.8'
 
 services:
   web:
@@ -10,8 +10,19 @@ services:
     ports:
       - "3000:3000"
     environment:
+      # 数据库连接（容器间通信）
       - DATABASE_URL=postgresql://postgres:postgres@db:5432/subtrack
-      - JWT_SECRET=change_me_in_production
+      # JWT密钥 - 生产环境请修改！生成命令: openssl rand -hex 32
+      - JWT_SECRET=${JWT_SECRET:-change_me_in_production}
+      # Webhook密钥（可选）
+      - WEBHOOK_SECRET=${WEBHOOK_SECRET:-}
+      # 通知配置（可选）
+      - RESEND_API_KEY=${RESEND_API_KEY:-}
+      - EMAIL_FROM=${EMAIL_FROM:-}
+      - DINGTALK_WEBHOOK=${DINGTALK_WEBHOOK:-}
+      - DINGTALK_SECRET=${DINGTALK_SECRET:-}
+      - FEISHU_WEBHOOK=${FEISHU_WEBHOOK:-}
+      - FEISHU_SECRET=${FEISHU_SECRET:-}
     depends_on:
       - db
     networks:
