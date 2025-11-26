@@ -24,11 +24,12 @@ interface Subscription {
   amount: number
   currency: string
   billingCycle: string
-  nextBillingDate: string
+  nextBillingDate: Date
   category?: string | null
+  logoUrl?: string | null
   isActive: boolean
-  daysUntilRenewal: number
-  shouldRemind: boolean
+  daysUntilRenewal?: number
+  shouldRemind?: boolean
 }
 
 export default function Dashboard() {

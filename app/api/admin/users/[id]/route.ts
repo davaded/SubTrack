@@ -8,7 +8,7 @@ export async function GET(
   request: NextRequest,
   { params }: { params: { id: string } }
 ) {
-  const adminOrError = await requireAdmin(request)
+  const adminOrError = await requireAdmin()
   if (adminOrError instanceof Response) {
     return adminOrError
   }
@@ -69,7 +69,7 @@ export async function DELETE(
   request: NextRequest,
   { params }: { params: { id: string } }
 ) {
-  const admin = await requireAdmin(request)
+  const admin = await requireAdmin()
   if (admin instanceof Response) {
     return admin
   }

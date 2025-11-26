@@ -8,7 +8,7 @@ export async function PATCH(
   request: NextRequest,
   { params }: { params: { id: string } }
 ) {
-  const admin = await requireAdmin(request)
+  const admin = await requireAdmin()
   if (admin instanceof Response) {
     return admin
   }

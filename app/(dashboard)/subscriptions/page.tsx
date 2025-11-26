@@ -15,10 +15,11 @@ interface Subscription {
   amount: number
   currency: string
   billingCycle: string
-  nextBillingDate: string
+  nextBillingDate: Date
   category?: string | null
+  logoUrl?: string | null
   isActive: boolean
-  daysUntilRenewal: number
+  daysUntilRenewal?: number
 }
 
 export default function SubscriptionsPage() {

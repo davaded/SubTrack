@@ -6,7 +6,7 @@ import { successResponse, errorResponse, ErrorCodes } from '@/lib/api-response'
 // GET /api/admin/users - Get all users with optional filtering
 export async function GET(request: NextRequest) {
   // Check admin permission
-  const adminOrError = await requireAdmin(request)
+  const adminOrError = await requireAdmin()
   if (adminOrError instanceof Response) {
     return adminOrError
   }

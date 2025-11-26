@@ -1,25 +1,24 @@
 import { NextRequest } from 'next/server'
 import { getCurrentUser } from './auth'
-import { errorResponse } from './api-response'
-import { ErrorCode } from './error-codes'
+import { errorResponse, ErrorCodes } from './api-response'
 
 /**
  * Require admin role for API routes
  * Returns the admin user if authorized, or an error response
  */
-export async function requireAdmin(request: NextRequest) {
-  const user = await getCurrentUser(request)
+export async function requireAdmin() {
+  const user = await getCurrentUser()
 
   if (!user) {
-    return errorResponse(ErrorCode.UNAUTHORIZED, 'Please log in to continue', 401)
+    return errorResponse(ErrorCodes.UNAUTHORIZED, 'Please log in to continue', 401)
   }
 
   if (user.role !== 'admin') {
-    return errorResponse(ErrorCode.FORBIDDEN, 'Admin access required', 403)
+    return errorResponse(ErrorCodes.FORBIDDEN, 'Admin access required', 403)
   }
 
   if (user.status !== 'active') {
-    return errorResponse(ErrorCode.FORBIDDEN, 'Your account is not active', 403)
+    return errorResponse(ErrorCodes.FORBIDDEN, 'Your account is not active', 403)
   }
 
   return user
@@ -28,8 +27,8 @@ export async function requireAdmin(request: NextRequest) {
 /**
  * Check if current user is admin (non-throwing version)
  */
-export async function isAdmin(request: NextRequest): Promise<boolean> {
-  const user = await getCurrentUser(request)
+export async function isAdmin(): Promise<boolean> {
+  const user = await getCurrentUser()
   return user?.role === 'admin' && user?.status === 'active'
 }
 

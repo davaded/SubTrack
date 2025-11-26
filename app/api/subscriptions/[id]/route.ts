@@ -23,7 +23,7 @@ export async function GET(request: NextRequest, context: RouteContext) {
     const subscription = await prisma.subscription.findFirst({
       where: {
         id: subscriptionId,
-        userId: currentUser.userId,
+        userId: currentUser.id,
       },
     })
 
@@ -66,7 +66,7 @@ export async function PUT(request: NextRequest, context: RouteContext) {
     const existing = await prisma.subscription.findFirst({
       where: {
         id: subscriptionId,
-        userId: currentUser.userId,
+        userId: currentUser.id,
       },
     })
 
@@ -161,7 +161,7 @@ export async function DELETE(request: NextRequest, context: RouteContext) {
     const existing = await prisma.subscription.findFirst({
       where: {
         id: subscriptionId,
-        userId: currentUser.userId,
+        userId: currentUser.id,
       },
     })
 

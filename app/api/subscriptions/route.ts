@@ -21,7 +21,7 @@ export async function GET(request: NextRequest) {
     const sortOrder = searchParams.get('sortOrder') || 'asc'
 
     const where: any = {
-      userId: currentUser.userId,
+      userId: currentUser.id,
     }
 
     if (category) {
@@ -101,7 +101,7 @@ export async function POST(request: NextRequest) {
     // Create subscription
     const subscription = await prisma.subscription.create({
       data: {
-        userId: currentUser.userId,
+        userId: currentUser.id,
         name: data.name,
         amount: data.amount,
         currency: data.currency,

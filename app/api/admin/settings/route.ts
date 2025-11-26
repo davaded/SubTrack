@@ -5,7 +5,7 @@ import { successResponse, errorResponse, ErrorCodes } from '@/lib/api-response'
 // GET /api/admin/settings - Get system settings
 export async function GET(request: NextRequest) {
   // Check admin permission
-  const adminOrError = await requireAdmin(request)
+  const adminOrError = await requireAdmin()
   if (adminOrError instanceof Response) {
     return adminOrError
   }
@@ -26,7 +26,7 @@ export async function GET(request: NextRequest) {
 // PATCH /api/admin/settings - Update system settings
 export async function PATCH(request: NextRequest) {
   // Check admin permission
-  const adminOrError = await requireAdmin(request)
+  const adminOrError = await requireAdmin()
   if (adminOrError instanceof Response) {
     return adminOrError
   }

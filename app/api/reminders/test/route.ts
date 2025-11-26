@@ -2,22 +2,22 @@ import { NextRequest, NextResponse } from 'next/server'
 import { prisma } from '@/lib/prisma'
 import { resend, EMAIL_FROM } from '@/lib/email/resend'
 import { generateReminderEmail } from '@/lib/email/templates'
-import { verifyAuth } from '@/lib/auth'
+import { getCurrentUser } from '@/lib/auth'
 import dayjs from 'dayjs'
 
 // 测试邮件发送（仅发送给当前登录用户）
 export async function POST(request: NextRequest) {
   try {
     // 验证用户登录
-    const authResult = await verifyAuth(request)
-    if (!authResult.user) {
+    const currentUser = await getCurrentUser()
+    if (!currentUser) {
       return NextResponse.json(
         { success: false, error: 'Unauthorized' },
         { status: 401 }
       )
     }
 
-    const userId = authResult.user.id
+    const userId = currentUser.id
 
     // 获取用户信息
     const user = await prisma.user.findUnique({

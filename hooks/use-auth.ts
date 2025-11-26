@@ -3,7 +3,7 @@ import { useRouter } from 'next/navigation'
 import { useAuthStore } from '@/store/auth-store'
 
 export function useAuth(requireAuth: boolean = true) {
-  const { user, isLoading, isAuthenticated, setUser, setLoading } = useAuthStore()
+  const { user, isLoading, isAuthenticated, setUser, setLoading, logout } = useAuthStore()
   const router = useRouter()
 
   useEffect(() => {
@@ -33,5 +33,5 @@ export function useAuth(requireAuth: boolean = true) {
     checkAuth()
   }, [setUser, setLoading, router, requireAuth])
 
-  return { user, isLoading, isAuthenticated }
+  return { user, isLoading, isAuthenticated, logout }
 }

@@ -9,19 +9,13 @@ export async function GET() {
     return errorResponse(ErrorCodes.UNAUTHORIZED, 'Not authenticated', 401)
   }
 
-  const user = await prisma.user.findUnique({
-    where: { id: currentUser.userId },
-    select: {
-      id: true,
-      email: true,
-      name: true,
-      defaultCurrency: true,
-    },
+  // getCurrentUser already returns the full user from database
+  return successResponse({
+    id: currentUser.id,
+    email: currentUser.email,
+    name: currentUser.name,
+    defaultCurrency: currentUser.defaultCurrency,
+    role: currentUser.role,
+    status: currentUser.status,
   })
-
-  if (!user) {
-    return errorResponse(ErrorCodes.USER_NOT_FOUND, 'User not found', 404)
-  }
-
-  return successResponse(user)
 }

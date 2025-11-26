@@ -13,14 +13,14 @@ export async function GET(request: NextRequest) {
   try {
     // 获取用户信息以获取默认货币
     const user = await prisma.user.findUnique({
-      where: { id: currentUser.userId },
+      where: { id: currentUser.id },
     })
 
     const defaultCurrency = user?.defaultCurrency || 'USD'
 
     const subscriptions = await prisma.subscription.findMany({
       where: {
-        userId: currentUser.userId,
+        userId: currentUser.id,
       },
     })
 

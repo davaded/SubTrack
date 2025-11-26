@@ -19,7 +19,7 @@ export async function GET(request: NextRequest) {
 
     const subscriptions = await prisma.subscription.findMany({
       where: {
-        userId: currentUser.userId,
+        userId: currentUser.id,
         isActive: true,
         nextBillingDate: {
           lte: futureDate,

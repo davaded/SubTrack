@@ -10,6 +10,15 @@ export interface JWTPayload {
   email: string
 }
 
+export interface User {
+  id: number
+  email: string
+  name: string | null
+  role: string
+  status: string
+  defaultCurrency: string
+}
+
 export async function hashPassword(password: string): Promise<string> {
   return bcrypt.hash(password, 10)
 }
@@ -54,8 +63,26 @@ export async function getAuthToken(): Promise<string | undefined> {
   return cookieStore.get(COOKIE_NAME)?.value
 }
 
-export async function getCurrentUser(): Promise<JWTPayload | null> {
+export async function getCurrentUser(): Promise<User | null> {
   const token = await getAuthToken()
   if (!token) return null
-  return verifyToken(token)
+
+  const payload = verifyToken(token)
+  if (!payload) return null
+
+  // Get full user from database
+  const { prisma } = await import('./prisma')
+  const user = await prisma.user.findUnique({
+    where: { id: payload.userId },
+    select: {
+      id: true,
+      email: true,
+      name: true,
+      role: true,
+      status: true,
+      defaultCurrency: true,
+    },
+  })
+
+  return user
 }

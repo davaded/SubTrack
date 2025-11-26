@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { prisma } from '@/lib/prisma'
-import { verifyAuth } from '@/lib/auth'
+import { getCurrentUser } from '@/lib/auth'
 import { successResponse, errorResponse } from '@/lib/api-response'
 import { calculateMonthlyCost } from '@/lib/currency'
 import dayjs from 'dayjs'
@@ -11,23 +11,17 @@ import dayjs from 'dayjs'
  */
 export async function GET(request: NextRequest) {
   try {
-    const authResult = await verifyAuth(request)
-    if (!authResult.user) {
-      return errorResponse('未授权', 401)
+    const currentUser = await getCurrentUser()
+    if (!currentUser) {
+      return errorResponse('UNAUTHORIZED', '未授权', 401)
     }
 
-    // 获取用户默认货币
-    const user = await prisma.user.findUnique({
-      where: { id: authResult.user.id },
-      select: { defaultCurrency: true },
-    })
-
-    const defaultCurrency = user?.defaultCurrency || 'USD'
+    const defaultCurrency = currentUser.defaultCurrency || 'USD'
 
     // 获取所有活跃订阅
     const subscriptions = await prisma.subscription.findMany({
       where: {
-        userId: authResult.user.id,
+        userId: currentUser.id,
         isActive: true,
       },
       select: {
@@ -109,6 +103,6 @@ export async function GET(request: NextRequest) {
     })
   } catch (error) {
     console.error('获取下月续费预测失败:', error)
-    return errorResponse('获取数据失败', 500)
+    return errorResponse('INTERNAL_ERROR', '获取数据失败', 500)
   }
 }
