@@ -24,9 +24,16 @@ WORKDIR /app
 COPY --from=deps /app/node_modules ./node_modules
 COPY . .
 
-# Set placeholder DATABASE_URL for build stage (Prisma needs this to generate client)
-# The real DATABASE_URL will be provided at runtime via docker-compose
-ENV DATABASE_URL="postgresql://placeholder:placeholder@localhost:5432/placeholder"
+# Accept build-time arguments
+ARG DATABASE_URL
+ARG JWT_SECRET
+ARG NEXT_PUBLIC_APP_URL
+
+# Set environment variables for build
+# Use placeholder if not provided via build args
+ENV DATABASE_URL=${DATABASE_URL:-"postgresql://placeholder:placeholder@localhost:5432/placeholder"}
+ENV JWT_SECRET=${JWT_SECRET:-"build-time-secret"}
+ENV NEXT_PUBLIC_APP_URL=${NEXT_PUBLIC_APP_URL:-"http://localhost:3000"}
 
 # Next.js collects completely anonymous telemetry data about general usage.
 # Learn more here: https://nextjs.org/telemetry

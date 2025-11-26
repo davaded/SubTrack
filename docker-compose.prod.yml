@@ -1,0 +1,50 @@
+# Production docker-compose using pre-built image from GHCR
+version: '3.8'
+
+services:
+  web:
+    # Use the pre-built image from GitHub Container Registry
+    # Format: ghcr.io/username/repository:tag
+    image: ghcr.io/${GITHUB_USERNAME:-your-username}/subtrack:latest
+    container_name: subtrack-web
+    restart: always
+    ports:
+      - "3000:3000"
+    environment:
+      # Runtime environment variables (from .env)
+      - DATABASE_URL=postgresql://postgres:${POSTGRES_PASSWORD:-postgres}@db:5432/subtrack
+      - JWT_SECRET=${JWT_SECRET:-change_me_in_production}
+      - WEBHOOK_SECRET=${WEBHOOK_SECRET:-}
+      - DEFAULT_ADMIN_EMAIL=${DEFAULT_ADMIN_EMAIL:-admin@example.com}
+      - DEFAULT_ADMIN_PASSWORD=${DEFAULT_ADMIN_PASSWORD:-admin123456}
+      - DEFAULT_ADMIN_NAME=${DEFAULT_ADMIN_NAME:-System Administrator}
+      - RESEND_API_KEY=${RESEND_API_KEY:-}
+      - EMAIL_FROM=${EMAIL_FROM:-}
+      - DINGTALK_WEBHOOK=${DINGTALK_WEBHOOK:-}
+      - DINGTALK_SECRET=${DINGTALK_SECRET:-}
+      - FEISHU_WEBHOOK=${FEISHU_WEBHOOK:-}
+      - FEISHU_SECRET=${FEISHU_SECRET:-}
+    depends_on:
+      - db
+    networks:
+      - subtrack-network
+
+  db:
+    image: postgres:15-alpine
+    container_name: subtrack-db
+    restart: always
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-postgres}
+      POSTGRES_DB: subtrack
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    networks:
+      - subtrack-network
+
+networks:
+  subtrack-network:
+    driver: bridge
+
+volumes:
+  postgres_data:

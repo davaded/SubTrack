@@ -1,0 +1,53 @@
+version: '3.8'
+
+services:
+  web:
+    build:
+      context: .
+      dockerfile: Dockerfile
+      args:
+        # Pass build arguments from .env file
+        DATABASE_URL: ${DATABASE_URL}
+        JWT_SECRET: ${JWT_SECRET}
+        NEXT_PUBLIC_APP_URL: ${NEXT_PUBLIC_APP_URL}
+    container_name: subtrack-web
+    restart: always
+    ports:
+      - "3000:3000"
+    environment:
+      # Runtime environment variables
+      - DATABASE_URL=${DATABASE_URL}
+      - JWT_SECRET=${JWT_SECRET}
+      - WEBHOOK_SECRET=${WEBHOOK_SECRET:-}
+      - DEFAULT_ADMIN_EMAIL=${DEFAULT_ADMIN_EMAIL:-admin@example.com}
+      - DEFAULT_ADMIN_PASSWORD=${DEFAULT_ADMIN_PASSWORD:-admin123456}
+      - RESEND_API_KEY=${RESEND_API_KEY:-}
+      - EMAIL_FROM=${EMAIL_FROM:-}
+      - DINGTALK_WEBHOOK=${DINGTALK_WEBHOOK:-}
+      - DINGTALK_SECRET=${DINGTALK_SECRET:-}
+      - FEISHU_WEBHOOK=${FEISHU_WEBHOOK:-}
+      - FEISHU_SECRET=${FEISHU_SECRET:-}
+    depends_on:
+      - db
+    networks:
+      - subtrack-network
+
+  db:
+    image: postgres:15-alpine
+    container_name: subtrack-db
+    restart: always
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-postgres}
+      POSTGRES_DB: subtrack
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    networks:
+      - subtrack-network
+
+networks:
+  subtrack-network:
+    driver: bridge
+
+volumes:
+  postgres_data:
