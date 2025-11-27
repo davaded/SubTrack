@@ -1,5 +1,10 @@
 # SubTrack - Subscription Management System
 
+[![Version](https://img.shields.io/github/v/release/davaded/SubTrack?label=version)](https://github.com/davaded/SubTrack/releases)
+[![Docker](https://img.shields.io/badge/docker-ghcr.io-blue)](https://github.com/davaded/SubTrack/pkgs/container/subtrack)
+[![License](https://img.shields.io/badge/license-MIT-green)](LICENSE)
+[![Build](https://img.shields.io/github/actions/workflow/status/davaded/SubTrack/docker-publish.yml?branch=main)](https://github.com/davaded/SubTrack/actions)
+
 [简体中文](./README.zh-CN.md) | English
 
 A modern web application to help you manage and track all your subscription services in one place.
@@ -13,6 +18,7 @@ A modern web application to help you manage and track all your subscription serv
 - 📈 **Statistics**: Spending trends and category analytics
 - 🌍 **Multi-language**: Support Chinese and English
 - 🎨 **Icon Support**: Automatically fetch subscription service icons
+- 👥 **Admin System**: User management, registration control, and system settings
 
 ### Reminder System
 - ✅ Email notifications (Resend)
@@ -61,12 +67,18 @@ Edit `.env` file:
 ```bash
 # Database
 DATABASE_URL="postgresql://user:password@localhost:5432/subscriptions"
+POSTGRES_PASSWORD="your-secure-password"
 
 # JWT Secret
 JWT_SECRET="your-super-secret-jwt-key"
 
 # App URL
 NEXT_PUBLIC_APP_URL="http://localhost:3000"
+
+# Default Admin Account
+DEFAULT_ADMIN_EMAIL="admin@example.com"
+DEFAULT_ADMIN_PASSWORD="admin123456"
+DEFAULT_ADMIN_NAME="System Administrator"
 
 # Email Reminder (Optional)
 RESEND_API_KEY="re_xxxxxxxxxxxx"
@@ -102,6 +114,14 @@ http://localhost:3000
 ---
 
 ## 📖 Documentation
+
+### Deployment Guides
+- [Docker Deployment (GitHub Container Registry)](./GITHUB_DEPLOY.md)
+- [Build and Deployment Options](./BUILD_DEPLOY.md)
+- [General Deployment Guide](./DEPLOY.md)
+
+### Admin System
+- [Admin System Guide](./ADMIN_GUIDE.md) - User management and system settings
 
 ### Reminder Configuration
 - [Email Reminder Setup Guide](./REMINDER_SETUP_EN.md)
@@ -198,14 +218,47 @@ How to switch:
 
 ## 🚀 Deployment
 
-### Vercel (Recommended)
+### Docker (Recommended)
+
+The easiest way to deploy SubTrack is using Docker with pre-built images from GitHub Container Registry.
+
+#### Quick Start
+
+```bash
+# 1. Clone the repository
+git clone https://github.com/davaded/SubTrack.git
+cd SubTrack
+
+# 2. Configure environment variables
+cp .env.example .env
+# Edit .env with your settings
+
+# 3. Deploy with Docker Compose
+export GITHUB_USERNAME=davaded
+docker-compose -f docker-compose.prod.yml pull
+docker-compose -f docker-compose.prod.yml up -d
+```
+
+#### Using Latest Release
+
+```bash
+# Pull the latest image
+docker pull ghcr.io/davaded/subtrack:latest
+
+# Or pull a specific version
+docker pull ghcr.io/davaded/subtrack:v1.0.0
+```
+
+**📖 Detailed Guide**: See [GITHUB_DEPLOY.md](./GITHUB_DEPLOY.md) for complete Docker deployment instructions.
+
+### Vercel
 
 1. Fork this project
 2. Import to Vercel
 3. Configure environment variables
 4. Deploy
 
-### Self-Hosted
+### Self-Hosted (Manual)
 
 1. Build project
 ```bash
@@ -221,6 +274,8 @@ npm start
 ```bash
 pm2 start npm --name "subtrack" -- start
 ```
+
+**📖 More Options**: See [BUILD_DEPLOY.md](./BUILD_DEPLOY.md) for all deployment methods.
 
 ---
 
@@ -272,12 +327,24 @@ If this project helps you, please give it a Star ⭐
 
 ### First-Time Setup
 
-1. **Create an Account**
-   - Navigate to `/register`
-   - Enter your email, password, and optional name
-   - You'll be automatically logged in
+1. **Admin Login**
+   - After first deployment, a default admin account is automatically created
+   - Login with the credentials from your `.env` file (DEFAULT_ADMIN_EMAIL / DEFAULT_ADMIN_PASSWORD)
+   - **Important**: Change the default password immediately after first login!
 
-2. **Add Your First Subscription**
+2. **Configure System Settings** (Admin Only)
+   - Navigate to `/admin/settings`
+   - Choose registration mode:
+     - **Open**: Anyone can register
+     - **Approval**: New users need admin approval
+     - **Closed**: Registration disabled
+   - Set site name and user limits
+
+3. **Create User Account** (or approve registrations)
+   - If registration is open, users can register at `/register`
+   - If approval mode, admin can approve users at `/admin/users`
+
+4. **Add Your First Subscription**
    - Click "Add Subscription" on the dashboard
    - Fill in the subscription details:
      - Name (e.g., "Netflix")
@@ -287,7 +354,7 @@ If this project helps you, please give it a Star ⭐
      - Category (optional)
      - Reminder settings
 
-3. **View Your Dashboard**
+5. **View Your Dashboard**
    - See overview of monthly and yearly costs
    - View upcoming renewals
    - Track active subscriptions
@@ -404,15 +471,22 @@ The application uses a warm, friendly color palette:
 ## Database Schema
 
 ### Users Table
-- id, email (unique), password (hashed), name, defaultCurrency
-- Timestamps: createdAt, updatedAt
+- **Core**: id, email (unique), password (hashed), name, defaultCurrency
+- **Admin System**: role (user/admin), status (pending/active/suspended)
+- **Approval**: approvedBy, approvedAt
+- **Security**: mustChangePassword, lastLoginAt
+- **Timestamps**: createdAt, updatedAt
 
 ### Subscriptions Table
-- id, userId (FK), name, amount, currency
-- billingCycle, customCycleDays, firstBillingDate, nextBillingDate
-- category, websiteUrl, logoUrl, notes
-- remindDaysBefore, isActive
-- Timestamps: createdAt, updatedAt
+- **Core**: id, userId (FK), name, amount, currency
+- **Billing**: billingCycle, customCycleDays, firstBillingDate, nextBillingDate
+- **Details**: category, websiteUrl, logoUrl, notes
+- **Reminder**: remindDaysBefore, isActive
+- **Timestamps**: createdAt, updatedAt
+
+### System Settings Table
+- **Config**: registrationMode (open/approval/closed), siteName, maxUsersLimit
+- **Timestamps**: createdAt, updatedAt
 
 ## Contributing
 
