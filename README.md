@@ -5,9 +5,11 @@
 [![License](https://img.shields.io/badge/license-MIT-green)](LICENSE)
 [![Build](https://img.shields.io/github/actions/workflow/status/davaded/SubTrack/docker-publish.yml?branch=main)](https://github.com/davaded/SubTrack/actions)
 
-[简体中文](./README.zh-CN.md) | English
+[简体中文](./README.zh-CN.md) | English | [🚀 Quick Start](./QUICKSTART.md)
 
 A modern web application to help you manage and track all your subscription services in one place.
+
+> **👉 New to SubTrack?** Check out our [Quick Start Guide](./QUICKSTART.md) for step-by-step deployment instructions!
 
 ## ✨ Features
 
