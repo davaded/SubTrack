@@ -43,9 +43,26 @@ ENV NEXT_PUBLIC_APP_URL=${NEXT_PUBLIC_APP_URL:-"http://localhost:3000"}
 RUN npx prisma generate
 RUN npm run build
 
-# Production image, copy all the files and run next
+# Migration image - only used for running database migrations
+FROM base AS migrator
+# Install OpenSSL for Prisma
+RUN apk add --no-cache openssl
+WORKDIR /app
+
+# Copy Prisma files and dependencies needed for migrations
+COPY --from=builder /app/prisma ./prisma
+COPY --from=builder /app/node_modules/.prisma ./node_modules/.prisma
+COPY --from=builder /app/node_modules/@prisma ./node_modules/@prisma
+COPY --from=builder /app/node_modules/prisma ./node_modules/prisma
+
+# Copy migration script
+COPY --chmod=755 docker-migrate.sh /usr/local/bin/
+
+CMD ["docker-migrate.sh"]
+
+# Production image - lightweight, no Prisma CLI
 FROM base AS runner
-# Install OpenSSL for Prisma runtime
+# Install OpenSSL for Prisma Client runtime
 RUN apk add --no-cache openssl
 WORKDIR /app
 
@@ -67,17 +84,9 @@ RUN chown nextjs:nodejs .next
 COPY --from=builder --chown=nextjs:nodejs /app/.next/standalone ./
 COPY --from=builder --chown=nextjs:nodejs /app/.next/static ./.next/static
 
-# Copy Prisma files for runtime migration
-COPY --from=builder --chown=nextjs:nodejs /app/prisma ./prisma
+# Copy only Prisma Client (no CLI needed)
 COPY --from=builder --chown=nextjs:nodejs /app/node_modules/.prisma/client ./node_modules/.prisma/client
 COPY --from=builder --chown=nextjs:nodejs /app/node_modules/@prisma/client ./node_modules/@prisma/client
-
-# Copy Prisma CLI and dependencies from builder (needed for migrations)
-COPY --from=builder --chown=nextjs:nodejs /app/node_modules/prisma ./node_modules/prisma
-COPY --from=builder --chown=nextjs:nodejs /app/node_modules/@prisma/engines ./node_modules/@prisma/engines
-
-# Copy entrypoint script
-COPY --chmod=755 docker-entrypoint.sh /usr/local/bin/
 
 USER nextjs
 
@@ -87,5 +96,4 @@ ENV PORT 3000
 # set hostname to localhost
 ENV HOSTNAME "0.0.0.0"
 
-ENTRYPOINT ["docker-entrypoint.sh"]
 CMD ["node", "server.js"]

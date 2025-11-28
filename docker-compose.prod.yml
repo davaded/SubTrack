@@ -2,6 +2,24 @@
 version: '3.8'
 
 services:
+  # Database migration service - runs once and exits
+  migration:
+    # Build locally from migrator stage (small and fast to build)
+    build:
+      context: .
+      dockerfile: Dockerfile
+      target: migrator
+    container_name: subtrack-migration
+    environment:
+      - DATABASE_URL=postgresql://postgres:${POSTGRES_PASSWORD:-postgres}@db:5432/subtrack
+    depends_on:
+      db:
+        condition: service_healthy
+    networks:
+      - subtrack-network
+    restart: "no"
+
+  # Web application - starts after migration completes
   web:
     # Use the pre-built image from GitHub Container Registry
     image: ghcr.io/davaded/subtrack:latest
@@ -24,7 +42,8 @@ services:
       - FEISHU_WEBHOOK=${FEISHU_WEBHOOK:-}
       - FEISHU_SECRET=${FEISHU_SECRET:-}
     depends_on:
-      - db
+      migration:
+        condition: service_completed_successfully
     networks:
       - subtrack-network
 
@@ -40,6 +59,11 @@ services:
       - postgres_data:/var/lib/postgresql/data
     networks:
       - subtrack-network
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
 
 networks:
   subtrack-network:

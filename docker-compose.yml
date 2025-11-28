@@ -1,10 +1,28 @@
 version: '3.8'
 
 services:
+  # Database migration service - runs once and exits
+  migration:
+    build:
+      context: .
+      dockerfile: Dockerfile
+      target: migrator
+    container_name: subtrack-migration
+    environment:
+      - DATABASE_URL=postgresql://postgres:${POSTGRES_PASSWORD:-postgres}@db:5432/subtrack
+    depends_on:
+      db:
+        condition: service_healthy
+    networks:
+      - subtrack-network
+    restart: "no"
+
+  # Web application - starts after migration completes
   web:
     build:
       context: .
       dockerfile: Dockerfile
+      target: runner
     container_name: subtrack-web
     restart: always
     ports:
@@ -16,6 +34,10 @@ services:
       - JWT_SECRET=${JWT_SECRET:-change_me_in_production}
       # Webhook密钥（可选）
       - WEBHOOK_SECRET=${WEBHOOK_SECRET:-}
+      # 默认管理员账号
+      - DEFAULT_ADMIN_EMAIL=${DEFAULT_ADMIN_EMAIL:-admin@example.com}
+      - DEFAULT_ADMIN_PASSWORD=${DEFAULT_ADMIN_PASSWORD:-admin123456}
+      - DEFAULT_ADMIN_NAME=${DEFAULT_ADMIN_NAME:-System Administrator}
       # 通知配置（可选）
       - RESEND_API_KEY=${RESEND_API_KEY:-}
       - EMAIL_FROM=${EMAIL_FROM:-}
@@ -24,7 +46,8 @@ services:
       - FEISHU_WEBHOOK=${FEISHU_WEBHOOK:-}
       - FEISHU_SECRET=${FEISHU_SECRET:-}
     depends_on:
-      - db
+      migration:
+        condition: service_completed_successfully
     networks:
       - subtrack-network
 
@@ -41,6 +64,11 @@ services:
       - postgres_data:/var/lib/postgresql/data
     networks:
       - subtrack-network
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
 
 networks:
   subtrack-network:
