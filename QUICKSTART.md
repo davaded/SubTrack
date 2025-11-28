@@ -156,7 +156,7 @@ echo "JWT_SECRET=$(openssl rand -base64 32)"
 nano .env
 ```
 
-**修改以下内容：**
+**必须修改以下内容：**
 
 ```bash
 # 数据库密码（粘贴刚才生成的）
@@ -165,13 +165,30 @@ POSTGRES_PASSWORD="刚才生成的数据库密码"
 # JWT 密钥（粘贴刚才生成的）
 JWT_SECRET="刚才生成的JWT密钥"
 
-# 应用访问地址（改成你的服务器IP）
-NEXT_PUBLIC_APP_URL="http://你的服务器IP:3000"
-
 # 默认管理员账号（首次登录用，之后要改密码）
 DEFAULT_ADMIN_EMAIL="admin@example.com"
 DEFAULT_ADMIN_PASSWORD="admin123456"
 DEFAULT_ADMIN_NAME="System Administrator"
+```
+
+**可选配置（只在需要邮件/通知提醒时配置）：**
+
+```bash
+# 应用访问地址（用于邮件和通知消息中的链接）
+# 如果不使用邮件/钉钉/飞书通知，不需要配置这一项
+# NEXT_PUBLIC_APP_URL="http://你的服务器IP:3000"
+
+# 邮件通知（可选）
+# RESEND_API_KEY="re_xxxxxxxxxxxx"
+# EMAIL_FROM="SubTrack <noreply@yourdomain.com>"
+
+# 钉钉通知（可选）
+# DINGTALK_WEBHOOK="https://oapi.dingtalk.com/robot/send?access_token=xxx"
+# DINGTALK_SECRET="SECxxxxxxxxx"
+
+# 飞书通知（可选）
+# FEISHU_WEBHOOK="https://open.feishu.cn/open-apis/bot/v2/hook/xxx"
+# FEISHU_SECRET="xxxxxxxxx"
 ```
 
 **保存文件：**
@@ -179,13 +196,27 @@ DEFAULT_ADMIN_NAME="System Administrator"
 - 按 `Y`（Yes）
 - 按 `Enter`（确认）
 
-**示例配置：**
+**最小配置示例（不使用通知功能）：**
 ```bash
 POSTGRES_PASSWORD="Xk9mP3vN2QwR5tY8"
 JWT_SECRET="a7B9c2D4e6F8h1J3k5L7m9N0p2Q4r6S8t0U2v4W6x8Y0z2A4"
-NEXT_PUBLIC_APP_URL="http://123.45.67.89:3000"
 DEFAULT_ADMIN_EMAIL="admin@mycompany.com"
 DEFAULT_ADMIN_PASSWORD="MySecurePass123"
+DEFAULT_ADMIN_NAME="Admin"
+```
+
+**完整配置示例（使用邮件通知）：**
+```bash
+POSTGRES_PASSWORD="Xk9mP3vN2QwR5tY8"
+JWT_SECRET="a7B9c2D4e6F8h1J3k5L7m9N0p2Q4r6S8t0U2v4W6x8Y0z2A4"
+DEFAULT_ADMIN_EMAIL="admin@mycompany.com"
+DEFAULT_ADMIN_PASSWORD="MySecurePass123"
+DEFAULT_ADMIN_NAME="Admin"
+
+# 通知功能（可选）
+NEXT_PUBLIC_APP_URL="http://123.45.67.89:3000"
+RESEND_API_KEY="re_xxxxxxxxxxxxxxxxxxxxxxxxxxxx"
+EMAIL_FROM="SubTrack <noreply@mycompany.com>"
 ```
 
 ---
