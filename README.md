@@ -235,11 +235,13 @@ cd SubTrack
 cp .env.example .env
 # Edit .env with your settings
 
-# 3. Deploy with Docker Compose
-export GITHUB_USERNAME=davaded
+# 3. Deploy with Docker Compose (using pre-built images)
+export GITHUB_USERNAME=davaded  # Use project author's username
 docker-compose -f docker-compose.prod.yml pull
 docker-compose -f docker-compose.prod.yml up -d
 ```
+
+**Note:** The `GITHUB_USERNAME=davaded` is used to pull pre-built images from the author's GitHub Container Registry. All users pull from the same public image at `ghcr.io/davaded/subtrack:latest`.
 
 #### Using Latest Release
 

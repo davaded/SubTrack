@@ -78,13 +78,18 @@ git push origin main
 # 1. 进入项目目录
 cd ~/SubTrack
 
-# 2. 设置你的 GitHub 用户名
-export GITHUB_USERNAME=your-github-username
+# 2. 设置 GitHub 用户名（使用项目作者的用户名）
+export GITHUB_USERNAME=davaded
 
 # 3. 使用生产配置文件部署
 docker-compose -f docker-compose.prod.yml pull
 docker-compose -f docker-compose.prod.yml up -d
 ```
+
+**📌 说明：**
+- 这里使用 `GITHUB_USERNAME=davaded` 是因为预构建镜像发布在作者的 GitHub Container Registry
+- 所有用户都从 `ghcr.io/davaded/subtrack:latest` 拉取相同的公开镜像
+- 如果你 fork 了项目并自己配置了 GitHub Actions，请使用你自己的用户名
 
 #### B. 使用私有镜像（需要认证）
 

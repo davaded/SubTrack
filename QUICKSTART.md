@@ -192,28 +192,40 @@ DEFAULT_ADMIN_PASSWORD="MySecurePass123"
 
 ## 第五步：启动服务
 
-### 5.1 等待 Docker 镜像构建完成
+### 💡 两种部署方式
 
-先访问：https://github.com/davaded/SubTrack/actions
+你可以选择以下两种方式之一：
 
-确保最新的构建显示 **✅ 绿色勾**（表示成功）
+#### 方式 A：使用预构建镜像（推荐）⭐
 
-**如果还在构建中（黄色圆圈🟡），等待 5-10 分钟。**
-
-### 5.2 启动应用
+**优点：** 快速、简单，1-2 分钟完成
+**缺点：** 依赖项目作者的镜像仓库
 
 ```bash
-# 设置用户名
+# 设置用户名（使用项目作者的用户名）
 export GITHUB_USERNAME=davaded
 
-# 拉取 Docker 镜像
+# 拉取预构建的 Docker 镜像
 docker-compose -f docker-compose.prod.yml pull
 
 # 启动服务
 docker-compose -f docker-compose.prod.yml up -d
 ```
 
-**启动需要 1-2 分钟，请耐心等待...**
+**注：** 这里使用 `davaded` 是因为镜像发布在作者的 GitHub Container Registry。
+所有用户都使用相同的公开镜像：`ghcr.io/davaded/subtrack:latest`
+
+#### 方式 B：本地构建镜像
+
+**优点：** 完全自主，不依赖他人
+**缺点：** 需要 5-10 分钟构建时间
+
+```bash
+# 使用本地构建配置文件
+docker-compose up -d --build
+```
+
+**启动需要 1-2 分钟（方式A）或 5-10 分钟（方式B），请耐心等待...**
 
 ### 5.3 查看启动状态
 

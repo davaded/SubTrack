@@ -15,7 +15,8 @@
       "Bash(docker build:*)",
       "Bash(npm run build:*)",
       "Bash(DATABASE_URL=\"postgresql://placeholder:placeholder@localhost:5432/placeholder\" JWT_SECRET=\"build-time-secret\" NEXT_PUBLIC_APP_URL=\"http://localhost:3000\" npm run build:*)",
-      "Bash(find:*)"
+      "Bash(find:*)",
+      "Bash(git tag:*)"
     ],
     "deny": [],
     "ask": []
