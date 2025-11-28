@@ -202,18 +202,12 @@ DEFAULT_ADMIN_PASSWORD="MySecurePass123"
 **缺点：** 依赖项目作者的镜像仓库
 
 ```bash
-# 设置用户名（使用项目作者的用户名）
-export GITHUB_USERNAME=davaded
-
-# 拉取预构建的 Docker 镜像
+# 拉取预构建的 Docker 镜像并启动
 docker-compose -f docker-compose.prod.yml pull
-
-# 启动服务
 docker-compose -f docker-compose.prod.yml up -d
 ```
 
-**注：** 这里使用 `davaded` 是因为镜像发布在作者的 GitHub Container Registry。
-所有用户都使用相同的公开镜像：`ghcr.io/davaded/subtrack:latest`
+**注：** 使用的是公开镜像 `ghcr.io/davaded/subtrack:latest`，所有用户都从这个地址拉取。
 
 #### 方式 B：本地构建镜像
 

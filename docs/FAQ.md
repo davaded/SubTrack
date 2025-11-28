@@ -2,11 +2,11 @@
 
 ## 部署相关
 
-### Q: 为什么部署时要使用 `GITHUB_USERNAME=davaded`？我不是 davaded 啊！
+### Q: 镜像地址是什么？我需要设置什么环境变量吗？
 
-**A:** 这是一个很好的问题！让我详细解释：
+**A:** 不需要设置任何环境变量！
 
-**简短回答：** 是的，所有人部署时都使用 `GITHUB_USERNAME=davaded`。
+**简短回答：** 镜像地址已经在 `docker-compose.prod.yml` 中配置好了。
 
 **详细解释：**
 
@@ -15,14 +15,12 @@ SubTrack 提供两种部署方式：
 #### 方式 1：使用预构建镜像（推荐）⭐
 
 ```bash
-export GITHUB_USERNAME=davaded
 docker-compose -f docker-compose.prod.yml pull
 docker-compose -f docker-compose.prod.yml up -d
 ```
 
-**为什么用 `davaded`？**
-- Docker 镜像已经预先构建好，发布在作者的 GitHub Container Registry
-- 镜像地址是：`ghcr.io/davaded/subtrack:latest`
+**镜像地址：** `ghcr.io/davaded/subtrack:latest`
+- Docker 镜像已经预先构建好，发布在 GitHub Container Registry
 - 这是一个**公开镜像**，所有人都可以免费使用
 - 就像你从 Docker Hub 拉取 `nginx:latest` 或 `postgres:15` 一样
 
@@ -30,7 +28,7 @@ docker-compose -f docker-compose.prod.yml up -d
 - ✅ 部署快速（1-2 分钟）
 - ✅ 不需要自己构建
 - ✅ 已经过测试和优化
-- ✅ 自动获取更新
+- ✅ 无需设置环境变量
 
 **类比：**
 这就像你安装 Nginx 时使用 `docker pull nginx:latest`，你也不是 Nginx 的作者，但你使用他们官方发布的镜像。SubTrack 也是一样的道理。
@@ -60,21 +58,19 @@ docker-compose up -d --build
 
 1. **Fork 项目到你的 GitHub 账号**
 2. **GitHub Actions 会自动发布到你的 GHCR**
-3. **修改部署命令：**
-
-```bash
-# 使用你自己的用户名
-export GITHUB_USERNAME=你的GitHub用户名
-docker-compose -f docker-compose.prod.yml pull
-docker-compose -f docker-compose.prod.yml up -d
-```
-
-4. **或者直接修改 `docker-compose.prod.yml`：**
+3. **修改 `docker-compose.prod.yml`：**
 
 ```yaml
 services:
   web:
     image: ghcr.io/你的用户名/subtrack:latest
+```
+
+4. **然后部署：**
+
+```bash
+docker-compose -f docker-compose.prod.yml pull
+docker-compose -f docker-compose.prod.yml up -d
 ```
 
 ---
