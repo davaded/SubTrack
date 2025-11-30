@@ -26,7 +26,7 @@ services:
     container_name: subtrack-web
     restart: always
     ports:
-      - "3000:3000"
+      - "3001:3000"
     environment:
       # Runtime environment variables (from .env)
       - DATABASE_URL=postgresql://postgres:${POSTGRES_PASSWORD:-postgres}@db:5432/subtrack

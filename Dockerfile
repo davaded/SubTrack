@@ -49,11 +49,9 @@ FROM base AS migrator
 RUN apk add --no-cache openssl
 WORKDIR /app
 
-# Copy Prisma files and dependencies needed for migrations
+# Copy complete node_modules to ensure prisma CLI is available
+COPY --from=deps /app/node_modules ./node_modules
 COPY --from=builder /app/prisma ./prisma
-COPY --from=builder /app/node_modules/.prisma ./node_modules/.prisma
-COPY --from=builder /app/node_modules/@prisma ./node_modules/@prisma
-COPY --from=builder /app/node_modules/prisma ./node_modules/prisma
 
 # Copy migration script
 COPY --chmod=755 docker-migrate.sh /usr/local/bin/
