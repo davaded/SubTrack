@@ -60,7 +60,7 @@ export default function EditSubscriptionPage({
   useEffect(() => {
     async function fetchSubscription() {
       try {
-        const response = await fetch(`/api/subscriptions/${params.id}`)
+        const response = await fetch(`/api/subscriptions/${params.id}`, { credentials: 'include' })
         if (response.ok) {
           const data = await response.json()
           const sub = data.data
@@ -122,6 +122,7 @@ export default function EditSubscriptionPage({
         method: 'PUT',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(payload),
+        credentials: 'include',
       })
 
       const data = await response.json()

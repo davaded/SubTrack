@@ -9,7 +9,9 @@ export function useAuth(requireAuth: boolean = true) {
   useEffect(() => {
     async function checkAuth() {
       try {
-        const response = await fetch('/api/auth/me')
+        const response = await fetch('/api/auth/me', {
+          credentials: 'include'
+        })
         if (response.ok) {
           const data = await response.json()
           setUser(data.data)

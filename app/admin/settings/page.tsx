@@ -25,7 +25,7 @@ export default function SettingsPage() {
 
   const fetchSettings = async () => {
     try {
-      const res = await fetch('/api/admin/settings')
+      const res = await fetch('/api/admin/settings', { credentials: 'include' })
       const data = await res.json()
 
       if (data.success) {
@@ -48,7 +48,8 @@ export default function SettingsPage() {
       const res = await fetch('/api/admin/settings', {
         method: 'PATCH',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(settings)
+        body: JSON.stringify(settings),
+        credentials: 'include',
       })
 
       const data = await res.json()

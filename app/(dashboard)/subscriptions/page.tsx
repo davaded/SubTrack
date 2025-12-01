@@ -35,7 +35,7 @@ export default function SubscriptionsPage() {
   useEffect(() => {
     async function fetchSubscriptions() {
       try {
-        const response = await fetch('/api/subscriptions')
+        const response = await fetch('/api/subscriptions', { credentials: 'include' })
         if (response.ok) {
           const data = await response.json()
           const subs = data.data.map((sub: any) => ({

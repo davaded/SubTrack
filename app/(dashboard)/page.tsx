@@ -42,8 +42,8 @@ export default function Dashboard() {
     async function fetchData() {
       try {
         const [statsRes, upcomingRes] = await Promise.all([
-          fetch('/api/subscriptions/stats'),
-          fetch('/api/subscriptions/upcoming?days=30'),
+          fetch('/api/subscriptions/stats', { credentials: 'include' }),
+          fetch('/api/subscriptions/upcoming?days=30', { credentials: 'include' }),
         ])
 
         if (statsRes.ok) {

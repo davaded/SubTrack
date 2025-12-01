@@ -48,7 +48,7 @@ export default function SubscriptionDetailPage({
   useEffect(() => {
     async function fetchSubscription() {
       try {
-        const response = await fetch(`/api/subscriptions/${params.id}`)
+        const response = await fetch(`/api/subscriptions/${params.id}`, { credentials: 'include' })
         if (response.ok) {
           const data = await response.json()
           setSubscription(data.data)
@@ -76,6 +76,7 @@ export default function SubscriptionDetailPage({
     try {
       const response = await fetch(`/api/subscriptions/${params.id}`, {
         method: 'DELETE',
+        credentials: 'include',
       })
 
       if (response.ok) {

@@ -86,9 +86,9 @@ export default function StatisticsPage() {
     async function fetchData() {
       try {
         const [statsRes, trendsRes, upcomingRes] = await Promise.all([
-          fetch('/api/subscriptions/stats'),
-          fetch('/api/subscriptions/trends'),
-          fetch('/api/subscriptions/upcoming-this-month'),
+          fetch('/api/subscriptions/stats', { credentials: 'include' }),
+          fetch('/api/subscriptions/trends', { credentials: 'include' }),
+          fetch('/api/subscriptions/upcoming-this-month', { credentials: 'include' }),
         ])
 
         if (statsRes.ok) {

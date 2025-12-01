@@ -22,7 +22,7 @@ export default function AdminDashboard() {
 
   const fetchStats = async () => {
     try {
-      const res = await fetch('/api/admin/users')
+      const res = await fetch('/api/admin/users', { credentials: 'include' })
       const data = await res.json()
 
       if (data.success) {

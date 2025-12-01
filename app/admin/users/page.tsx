@@ -43,7 +43,7 @@ export default function UsersPage() {
         params.append('search', search)
       }
 
-      const res = await fetch(`/api/admin/users?${params}`)
+      const res = await fetch(`/api/admin/users?${params}`, { credentials: 'include' })
       const data = await res.json()
 
       if (data.success) {
@@ -68,7 +68,8 @@ export default function UsersPage() {
         : `/api/admin/users/${userId}/${action}`
 
       const res = await fetch(endpoint, {
-        method: action === 'delete' ? 'DELETE' : 'PATCH'
+        method: action === 'delete' ? 'DELETE' : 'PATCH',
+        credentials: 'include',
       })
 
       const data = await res.json()

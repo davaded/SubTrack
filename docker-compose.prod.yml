@@ -21,8 +21,11 @@ services:
 
   # Web application - starts after migration completes
   web:
-    # Use the pre-built image from GitHub Container Registry
-    image: ghcr.io/davaded/subtrack:latest
+    # Build locally instead of using pre-built image
+    build:
+      context: .
+      dockerfile: Dockerfile
+      target: runner
     container_name: subtrack-web
     restart: always
     ports:

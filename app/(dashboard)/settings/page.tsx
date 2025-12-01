@@ -59,7 +59,7 @@ export default function SettingsPage() {
   useEffect(() => {
     async function fetchNotificationConfig() {
       try {
-        const response = await fetch('/api/notifications/test')
+        const response = await fetch('/api/notifications/test', { credentials: 'include' })
         if (response.ok) {
           const config = await response.json()
           setNotificationConfig(config)
@@ -84,6 +84,7 @@ export default function SettingsPage() {
           channel,
           userEmail: user?.email,
         }),
+        credentials: 'include',
       })
 
       const data = await response.json()
