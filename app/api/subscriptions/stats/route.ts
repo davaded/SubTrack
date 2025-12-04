@@ -2,7 +2,48 @@ import { NextRequest } from 'next/server'
 import { getCurrentUser } from '@/lib/auth'
 import { prisma } from '@/lib/prisma'
 import { successResponse, errorResponse, ErrorCodes } from '@/lib/api-response'
-import { calculateMonthlyCost } from '@/lib/currency'
+import { convertCurrency } from '@/lib/currency'
+import dayjs from 'dayjs'
+
+// 计算从首次计费日到今天已经发生了多少次计费
+function calculatePaymentCount(
+  firstBillingDate: Date,
+  billingCycle: string,
+  customCycleDays: number | null
+): number {
+  const start = dayjs(firstBillingDate)
+  const today = dayjs()
+  
+  if (start.isAfter(today)) {
+    return 0 // 还没开始计费
+  }
+
+  const daysSinceStart = today.diff(start, 'day')
+  
+  let cycleDays: number
+  switch (billingCycle) {
+    case 'monthly':
+      cycleDays = 30
+      break
+    case 'quarterly':
+      cycleDays = 90
+      break
+    case 'semi-annually':
+      cycleDays = 180
+      break
+    case 'annually':
+      cycleDays = 365
+      break
+    case 'custom':
+      cycleDays = customCycleDays || 30
+      break
+    default:
+      cycleDays = 30
+  }
+
+  // 计算已经发生的计费次数（包括首次）
+  return Math.floor(daysSinceStart / cycleDays) + 1
+}
 
 export async function GET(request: NextRequest) {
   const currentUser = await getCurrentUser()
@@ -24,7 +65,7 @@ export async function GET(request: NextRequest) {
       },
     })
 
-    let totalMonthly = 0
+    let totalSpent = 0 // 历史总支出
     const byCategory: Record<string, number> = {}
     let activeCount = 0
     let cancelledCount = 0
@@ -32,35 +73,40 @@ export async function GET(request: NextRequest) {
     subscriptions.forEach((sub) => {
       if (sub.isActive) {
         activeCount++
-
-        // 使用货币转换工具计算月度成本（转换为用户的默认货币）
-        const monthlyAmount = calculateMonthlyCost(
-          Number(sub.amount),
-          sub.currency,
-          sub.billingCycle,
-          sub.customCycleDays,
-          defaultCurrency
-        )
-
-        totalMonthly += monthlyAmount
-
-        // Category stats
-        if (sub.category) {
-          byCategory[sub.category] = (byCategory[sub.category] || 0) + monthlyAmount
-        }
       } else {
         cancelledCount++
       }
+
+      // 计算已发生的支付次数
+      const paymentCount = calculatePaymentCount(
+        sub.firstBillingDate,
+        sub.billingCycle,
+        sub.customCycleDays
+      )
+
+      if (paymentCount > 0) {
+        // 转换为用户默认货币
+        const amountInDefaultCurrency = convertCurrency(
+          Number(sub.amount),
+          sub.currency,
+          defaultCurrency
+        )
+
+        const totalForSub = amountInDefaultCurrency * paymentCount
+        totalSpent += totalForSub
+
+        // Category stats
+        if (sub.category) {
+          byCategory[sub.category] = (byCategory[sub.category] || 0) + totalForSub
+        }
+      }
     })
 
-    const totalYearly = totalMonthly * 12
-
     return successResponse({
-      totalMonthly: Number(totalMonthly.toFixed(2)),
-      totalYearly: Number(totalYearly.toFixed(2)),
+      totalSpent: Number(totalSpent.toFixed(2)), // 历史总支出
       activeCount,
       cancelledCount,
-      currency: defaultCurrency, // 返回用户的默认货币
+      currency: defaultCurrency,
       byCategory: Object.fromEntries(
         Object.entries(byCategory).map(([key, value]) => [
           key,

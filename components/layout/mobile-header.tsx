@@ -2,9 +2,10 @@
 
 import { useState } from 'react'
 import { useRouter } from 'next/navigation'
+import Link from 'next/link'
 import { useAuthStore } from '@/store/auth-store'
 import { Button } from '@/components/ui/button'
-import { Menu, X, LogOut } from 'lucide-react'
+import { Menu, X, LogOut, Shield } from 'lucide-react'
 
 export function MobileHeader() {
   const router = useRouter()
@@ -45,6 +46,19 @@ export function MobileHeader() {
               <div className="text-sm text-sub-headline">
                 {user?.name || user?.email}
               </div>
+              {/* 管理员入口 */}
+              {user?.role === 'admin' && (
+                <Link href="/admin/dashboard" onClick={() => setIsMenuOpen(false)}>
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    className="w-full justify-start gap-2 border-highlight text-highlight"
+                  >
+                    <Shield className="h-4 w-4" />
+                    管理后台
+                  </Button>
+                </Link>
+              )}
               <Button
                 variant="ghost"
                 size="sm"

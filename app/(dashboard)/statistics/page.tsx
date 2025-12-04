@@ -22,8 +22,7 @@ import { useTranslation } from '@/lib/hooks/use-translation'
 import { getCurrencySymbol } from '@/lib/currency'
 
 interface Stats {
-  totalMonthly: number
-  totalYearly: number
+  totalSpent: number
   activeCount: number
   cancelledCount: number
   currency: string
@@ -162,28 +161,14 @@ export default function StatisticsPage() {
         <Card>
           <CardHeader className="pb-2">
             <CardTitle className="text-sm font-medium text-sub-headline">
-              {t.analytics.monthlyCost}
+              {t.analytics.totalSpent || '累计支出'}
             </CardTitle>
           </CardHeader>
           <CardContent>
             <div className="text-3xl font-bold text-headline">
-              {getCurrencySymbol(stats.currency)}{stats.totalMonthly.toFixed(2)}
+              {getCurrencySymbol(stats.currency)}{stats.totalSpent.toFixed(2)}
             </div>
-            <p className="text-xs text-sub-headline mt-1">{t.analytics.monthlyTotal}</p>
-          </CardContent>
-        </Card>
-
-        <Card>
-          <CardHeader className="pb-2">
-            <CardTitle className="text-sm font-medium text-sub-headline">
-              {t.analytics.yearlyCost}
-            </CardTitle>
-          </CardHeader>
-          <CardContent>
-            <div className="text-3xl font-bold text-headline">
-              {getCurrencySymbol(stats.currency)}{stats.totalYearly.toFixed(2)}
-            </div>
-            <p className="text-xs text-sub-headline mt-1">{t.analytics.yearlyTotal}</p>
+            <p className="text-xs text-sub-headline mt-1">{t.analytics.totalSpentDesc || '截至今日'}</p>
           </CardContent>
         </Card>
 

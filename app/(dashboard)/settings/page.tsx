@@ -12,7 +12,7 @@ import { Bell, Mail, Loader2, CheckCircle2, XCircle } from 'lucide-react'
 import { useTranslation } from '@/lib/hooks/use-translation'
 
 export default function SettingsPage() {
-  const { t } = useTranslation()
+  const { t, locale } = useTranslation()
   const router = useRouter()
   const { user, setUser } = useAuthStore()
   const [isLoading, setIsLoading] = useState(false)
@@ -21,6 +21,7 @@ export default function SettingsPage() {
 
   // 个人信息表单
   const [profileData, setProfileData] = useState({
+    email: '',
     name: '',
     defaultCurrency: 'USD',
   })
@@ -49,6 +50,7 @@ export default function SettingsPage() {
   useEffect(() => {
     if (user) {
       setProfileData({
+        email: user.email || '',
         name: user.name || '',
         defaultCurrency: user.defaultCurrency,
       })
@@ -125,15 +127,31 @@ export default function SettingsPage() {
     setIsLoading(true)
 
     try {
-      // 这里应该调用更新用户信息的 API
-      // 暂时模拟成功
-      setMessage(t.settings.profileUpdateSuccess)
-      if (user) {
-        setUser({
-          ...user,
+      const response = await fetch('/api/auth/update-profile', {
+        method: 'PATCH',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          email: profileData.email,
           name: profileData.name,
           defaultCurrency: profileData.defaultCurrency,
-        })
+        }),
+        credentials: 'include',
+      })
+
+      const data = await response.json()
+
+      if (data.success) {
+        setMessage(t.settings.profileUpdateSuccess)
+        if (user) {
+          setUser({
+            ...user,
+            email: profileData.email,
+            name: profileData.name,
+            defaultCurrency: profileData.defaultCurrency,
+          })
+        }
+      } else {
+        setError(data.error?.message || t.errors.updateFailed)
       }
     } catch (err) {
       setError(t.errors.updateFailed)
@@ -160,14 +178,28 @@ export default function SettingsPage() {
     setIsLoading(true)
 
     try {
-      // 这里应该调用修改密码的 API
-      // 暂时模拟成功
-      setMessage(t.settings.passwordChangeSuccess)
-      setPasswordData({
-        currentPassword: '',
-        newPassword: '',
-        confirmPassword: '',
+      const response = await fetch('/api/auth/update-profile', {
+        method: 'PATCH',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          currentPassword: passwordData.currentPassword,
+          newPassword: passwordData.newPassword,
+        }),
+        credentials: 'include',
       })
+
+      const data = await response.json()
+
+      if (data.success) {
+        setMessage(t.settings.passwordChangeSuccess)
+        setPasswordData({
+          currentPassword: '',
+          newPassword: '',
+          confirmPassword: '',
+        })
+      } else {
+        setError(data.error?.message || t.settings.passwordChangeFailed)
+      }
     } catch (err) {
       setError(t.settings.passwordChangeFailed)
     } finally {
@@ -208,11 +240,16 @@ export default function SettingsPage() {
               <Input
                 id="email"
                 type="email"
-                value={user?.email || ''}
-                disabled
-                className="bg-card-background"
+                value={profileData.email}
+                onChange={(e) =>
+                  setProfileData({ ...profileData, email: e.target.value })
+                }
+                placeholder="your@email.com"
+                required
               />
-              <p className="text-xs text-sub-headline">{t.settings.emailCannotChange}</p>
+              <p className="text-xs text-sub-headline">
+                {locale === 'zh' ? '修改邮箱后需要重新登录' : 'You may need to re-login after changing email'}
+              </p>
             </div>
 
             <div className="space-y-2">

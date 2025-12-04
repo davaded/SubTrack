@@ -4,7 +4,7 @@ import Link from 'next/link'
 import { usePathname, useRouter } from 'next/navigation'
 import { cn } from '@/lib/utils'
 import { useAuthStore } from '@/store/auth-store'
-import { Home, CreditCard, BarChart3, Settings, LogOut, Languages } from 'lucide-react'
+import { Home, CreditCard, BarChart3, Settings, LogOut, Languages, Shield } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { useTranslation } from '@/lib/hooks/use-translation'
 
@@ -77,6 +77,19 @@ export function TopNav() {
                 <span className="text-sm text-sub-headline">
                   {user.name || user.email}
                 </span>
+                {/* 管理员入口 */}
+                {user.role === 'admin' && (
+                  <Link href="/admin/dashboard">
+                    <Button
+                      variant="outline"
+                      size="sm"
+                      className="gap-1 border-highlight text-highlight hover:bg-highlight hover:text-main"
+                    >
+                      <Shield className="h-4 w-4" />
+                      {locale === 'zh' ? '管理后台' : 'Admin'}
+                    </Button>
+                  </Link>
+                )}
                 <Button
                   variant="ghost"
                   size="sm"

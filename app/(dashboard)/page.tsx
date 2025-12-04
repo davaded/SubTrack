@@ -11,8 +11,7 @@ import { getCurrencySymbol } from '@/lib/currency'
 import { Skeleton } from "@/components/ui/skeleton"
 
 interface Stats {
-  totalMonthly: number
-  totalYearly: number
+  totalSpent: number
   activeCount: number
   cancelledCount: number
   currency: string
@@ -141,16 +140,16 @@ export default function Dashboard() {
         <Card>
           <CardHeader className="flex flex-row items-center justify-between pb-2">
             <CardTitle className="text-sm font-medium text-sub-headline">
-              {t.dashboard.monthlyCost}
+              {t.dashboard.totalSpent || '累计支出'}
             </CardTitle>
             <DollarSign className="h-4 w-4 text-highlight" />
           </CardHeader>
           <CardContent>
             <div className="text-3xl font-bold text-headline">
-              {stats ? getCurrencySymbol(stats.currency) : '$'}{stats?.totalMonthly.toFixed(2) || '0.00'}
+              {stats ? getCurrencySymbol(stats.currency) : '$'}{stats?.totalSpent.toFixed(2) || '0.00'}
             </div>
             <p className="text-xs text-sub-headline mt-1">
-              {stats ? getCurrencySymbol(stats.currency) : '$'}{stats?.totalYearly.toFixed(2) || '0.00'} {t.dashboard.perYear}
+              {t.dashboard.historicalSpending || '截至今日'}
             </p>
           </CardContent>
         </Card>
