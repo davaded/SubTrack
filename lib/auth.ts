@@ -44,11 +44,19 @@ export function verifyToken(token: string): JWTPayload | null {
 
 export async function setAuthCookie(token: string) {
   const cookieStore = await cookies()
-  const isSecure = process.env.COOKIE_SECURE === 'true'
+  
+  // Cookie 配置策略：
+  // - secure: false 可以同时支持 HTTP 和 HTTPS
+  // - sameSite: 'lax' 允许正常导航时携带 cookie，同时提供 CSRF 保护
+  // - httpOnly: true 防止 XSS 攻击读取 cookie
+  // 
+  // 如果需要强制 HTTPS，设置环境变量 COOKIE_SECURE=true
+  const forceSecure = process.env.COOKIE_SECURE === 'true'
+  
   cookieStore.set(COOKIE_NAME, token, {
-    httpOnly: false, // Allow JavaScript access for HTTP environments
-    secure: isSecure,
-    sameSite: 'strict',
+    httpOnly: true,
+    secure: forceSecure, // false = 支持 HTTP 和 HTTPS，true = 仅 HTTPS
+    sameSite: 'lax',
     maxAge: 60 * 60 * 24 * 7, // 7 days
     path: '/',
   })
