@@ -16,13 +16,14 @@ export function useAuth(requireAuth: boolean = true) {
           const data = await response.json()
           setUser(data.data)
         } else {
+          // 401 是正常的未登录状态，静默处理
           setUser(null)
           if (requireAuth) {
             router.push('/login')
           }
         }
-      } catch (error) {
-        console.error('Auth check failed:', error)
+      } catch {
+        // 网络错误等异常情况，静默处理
         setUser(null)
         if (requireAuth) {
           router.push('/login')

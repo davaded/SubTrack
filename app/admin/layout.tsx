@@ -28,10 +28,10 @@ export default function AdminLayout({
 
   if (isLoading || !user || user.role !== 'admin') {
     return (
-      <div className="flex h-screen items-center justify-center">
+      <div className="flex h-screen items-center justify-center bg-background">
         <div className="text-center">
           <div className="h-8 w-8 animate-spin rounded-full border-4 border-highlight border-t-transparent mx-auto mb-4" />
-          <p className="text-paragraph">Loading admin panel...</p>
+          <p className="text-sub-headline">Loading admin panel...</p>
         </div>
       </div>
     )

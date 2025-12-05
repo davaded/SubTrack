@@ -59,8 +59,8 @@ export default function Dashboard() {
             }))
           )
         }
-      } catch (error) {
-        console.error('Failed to fetch data:', error)
+      } catch {
+        // 静默处理错误（401 等情况由 auth hook 处理）
       } finally {
         setIsLoading(false)
       }
